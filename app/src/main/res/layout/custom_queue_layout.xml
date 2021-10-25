@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/queueItem"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="7">
 
     <ImageView
         android:id="@+id/coverArt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:contentDescription="TODO" />
+        android:contentDescription="TODO"
+        android:layout_weight="3"
+        />
 
     <TextView
         android:id="@+id/songTitle"
@@ -19,7 +22,8 @@
         android:textStyle="bold"
         android:textColor="@color/white"
         android:text="SongTitle"
-        android:layout_toEndOf="@id/coverArt"/>
+        android:layout_weight="2"
+        />
 
     <TextView
         android:id="@+id/artist"
@@ -28,8 +32,8 @@
         android:textSize="18sp"
         android:textColor="@color/white"
         android:text="Artist"
-        android:layout_toEndOf="@+id/coverArt"
-        android:layout_below="@+id/songTitle"/>
+        android:layout_weight="2"
+        />
 
 
 
@@ -39,19 +43,14 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_upvote"
         android:layout_marginLeft="10dp"
-
-        android:layout_toEndOf="@id/songTitle"/>
+        />
     <ImageView
         android:id="@+id/downvote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_downvote"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="1dp"
-        android:layout_toEndOf="@+id/songTitle"
-        android:layout_below="@id/upvote"/>
+        />
 
 
-
-
-</RelativeLayout>
+</LinearLayout>
