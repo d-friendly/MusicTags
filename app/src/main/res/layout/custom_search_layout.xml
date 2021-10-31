@@ -7,13 +7,13 @@
     android:weightSum="7">
 
 
-
     <ImageView
         android:id="@+id/coverArt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="TODO"
-        android:layout_weight="3" />
+        android:layout_weight="3"
+        />
 
     <TextView
         android:id="@+id/songTitle"
