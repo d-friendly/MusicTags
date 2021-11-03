@@ -1,32 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:layout_constraintBottom_toTopOf="@+id/bottomnav"
     tools:context=".HomeFragment">
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <ImageButton
-            android:id="@+id/imageButton8"
+            android:id="@+id/downVoteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
             android:src="@drawable/ic_downvote"
+            android:onClick="downVoteFunction"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <ImageButton
-            android:id="@+id/imageButton7"
+            android:id="@+id/upVoteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
             android:src="@drawable/ic_upvote"
-            app:layout_constraintBottom_toTopOf="@+id/imageButton8"
+            android:onClick="upVoteFunction"
+            app:layout_constraintBottom_toTopOf="@+id/downVoteButton"
             app:layout_constraintEnd_toEndOf="parent"
             tools:ignore="MissingConstraints" />
 
@@ -37,31 +36,34 @@
             android:layout_gravity="bottom"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/imageButton8"
+            app:layout_constraintEnd_toStartOf="@+id/downVoteButton"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/imageButton7"
+            app:layout_constraintTop_toTopOf="@+id/upVoteButton"
             tools:ignore="MissingConstraints">
 
             <ImageButton
-                android:id="@+id/imageButton"
+                android:id="@+id/lastSongButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@android:drawable/ic_media_rew" />
+                android:src="@android:drawable/ic_media_rew"
+                android:onClick="lastSongFunction"/>
 
             <ImageButton
-                android:id="@+id/imageButton2"
+                android:id="@+id/playButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@android:drawable/ic_media_play" />
+                android:src="@android:drawable/ic_media_play"
+                android:onClick="playFunction"/>
 
             <ImageButton
-                android:id="@+id/imageButton3"
+                android:id="@+id/nextSongButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@android:drawable/ic_media_ff" />
+                android:src="@android:drawable/ic_media_ff"
+                android:onClick="nextSongFunction"/>
 
         </LinearLayout>
 
@@ -98,6 +100,5 @@
                 android:text="TextView" />
         </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
