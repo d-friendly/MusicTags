@@ -50,7 +50,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         ImageButton play = (ImageButton) homeV.findViewById(R.id.playButton);
         play.setOnClickListener(this);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.fragment_map);
 
         //returns layout for this fragment
@@ -81,6 +81,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    /*
     private void displayMyLocation() {
         //check if permission is granted
         int permission = ActivityCompat.checkSelfPermission(this.getApplicationContext(),
@@ -98,7 +99,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         Location mLastKnownLocation = task.getResult();
                         if (task.isSuccessful() && mLastKnownLocation != null) {
 
-                            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_map);
+                            SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.fragment_map);
                             mapFragment.getMapAsync(googleMap -> {
                                 mMap = googleMap;
 
@@ -113,6 +114,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
 
     }
+*/
 
     /**
      * Handles the result of the request for location permissions.
@@ -127,7 +129,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             //if request is cancelled, the result arrays are empty.
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                displayMyLocation();
+                //displayMyLocation();
             }
         }
 

@@ -8,6 +8,13 @@
     tools:context=".HomeFragment">
 
 
+    <fragment
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/fragment_map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"/>
+
     <ImageButton
         android:id="@+id/downVoteButton"
         android:layout_width="wrap_content"
@@ -40,6 +47,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/upVoteButton"
         tools:ignore="MissingConstraints">
+
 
         <ImageButton
             android:id="@+id/lastSongButton"
@@ -100,12 +108,5 @@
             android:layout_weight="1"
             android:text="TextView" />
     </LinearLayout>
-
-    <fragment
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/fragment_map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
