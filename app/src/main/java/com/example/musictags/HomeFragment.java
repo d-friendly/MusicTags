@@ -17,10 +17,12 @@ import android.widget.ImageButton;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+
 
 
 
@@ -58,6 +60,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.fragment_map);
 
+
         //returns layout for this fragment
         return homeV;
     }
@@ -86,40 +89,41 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    /*
-    private void displayMyLocation() {
-        //check if permission is granted
-        int permission = ActivityCompat.checkSelfPermission(this.getApplicationContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION);
-        //If not, ask for it
-        if (permission == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-        }
 
-        else {
-            mFusedLocationProviderClient.getLastLocation()
-                    .addOnCompleteListener(this, task -> {
-                        Location mLastKnownLocation = task.getResult();
-                        if (task.isSuccessful() && mLastKnownLocation != null) {
+//    private void displayMyLocation() {
+//        //check if permission is granted
+//        int permission = ActivityCompat.checkSelfPermission(this.getApplicationContext(),
+//                android.Manifest.permission.ACCESS_FINE_LOCATION);
+//        //If not, ask for it
+//        if (permission == PackageManager.PERMISSION_DENIED) {
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+//                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+//        }
+//
+//        else {
+//            mFusedLocationProviderClient.getLastLocation()
+//                    .addOnCompleteListener(this, task -> {
+//                        Location mLastKnownLocation = task.getResult();
+//                        if (task.isSuccessful() && mLastKnownLocation != null) {
+//
+//                            SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.fragment_map);
+//                            mapFragment.getMapAsync(googleMap -> {
+//                                mMap = googleMap;
+//
+//                                mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(),
+//                                        mLastKnownLocation.getLongitude())).title("Current Location"));
+//                                displayMyLocation();
+//                            });
+//                        }
+//
+//                    });
+//        }
+//
+//
+//    }
 
-                            SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.fragment_map);
-                            mapFragment.getMapAsync(googleMap -> {
-                                mMap = googleMap;
 
-                                mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(),
-                                        mLastKnownLocation.getLongitude())).title("Current Location"));
-                                displayMyLocation();
-                            });
-                        }
-
-                    });
-        }
-
-
-    }
-*/
 
     /**
      * Handles the result of the request for location permissions.
