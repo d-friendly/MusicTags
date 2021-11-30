@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -48,10 +49,13 @@ public class QueueCustomAdapter extends BaseAdapter implements ListAdapter {
         }
 
         //Handle TextView and display string from your list
+        LinearLayout queueItem = (LinearLayout) view.findViewById((R.id.queueItem));
+
+
         ImageView coverArt = (ImageView) view.findViewById(R.id.coverArt);
         //TODO
         //temporary data to show UI
-        coverArt.setImageResource(R.drawable.ic_home);
+        coverArt.setImageResource(R.drawable.kanye);
         TextView tvSong= (TextView)view.findViewById(R.id.songTitle);
         tvSong.setText("Song Title");
         TextView tvArtist= (TextView)view.findViewById(R.id.artist);

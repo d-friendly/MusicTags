@@ -29,6 +29,8 @@ public class QueueFragment extends Fragment {
         //add list to list view
         ListView listView = (ListView) v.findViewById(R.id.listView);
         //PLACHOLDER DATA
+
+
         data = new ArrayList<String>(Arrays.asList("111,222,333,444,555,666,dfdfd,dfsdfdsf,dfsdfsdf,dfdfsdga,fdfafds,dsfdsfs,dfsdfs,dfs,df,sdf,sd,dfdf,sdf,sdf,d,fd,fd,f,d,fd,f,df,df".split(",")));
         listView.setAdapter(new QueueCustomAdapter(data, getContext()) );
 
