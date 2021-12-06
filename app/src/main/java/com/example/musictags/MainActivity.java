@@ -18,6 +18,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
+
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -41,16 +43,13 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private NavigationBarView bottomNavigationView;
-    LocationManager locationManager;
-    LocationListener locationListener;
+
 
     private static final String CLIENT_ID = "10ee2098620d4a0b8fde685d19d8a0ab";
     private static final String REDIRECT_URI = "http://localhost:8888/callback";
     //private static final String REDIRECT_URI = "http://com.yourdomain.musictags/callback;
     private SpotifyAppRemote mSpotifyAppRemote;
-    private static GoogleMap mMap;
-    private FusedLocationProviderClient mFusedLocationProviderClient; //Save the instance
-    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,143 +85,18 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-       // mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         bottomNavigationView = findViewById(R.id.bottomnav);
         bottomNavigationView.setOnItemSelectedListener(bottomnavFunction);
 
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-
-            @Override
-            public void onLocationChanged(@NonNull Location location) {
-                updateLocationInfo(location);
-            }
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle){
-
-            }
-            @Override
-            public void onProviderEnabled(String s){
-
-            }
-            @Override
-            public void onProviderDisabled(String s){
-
-            }
-        };
-
-        if (Build.VERSION.SDK_INT < 23) {
-            startListening();
-        } else {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            } else{
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (location != null) {
-                    updateLocationInfo(location);
-                }
-            }
-        }
-
         getSupportFragmentManager().beginTransaction().replace(R.id.container, new HomeFragment()).commit();
-
-
-
     }
 
-    public void startListening() {
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if ((grantResults.length >= 0) && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            startListening();
-        }
-    }
-
-    public void updateLocationInfo(Location location) {
-        Log.i("LocationInfo", location.toString());
-
-        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-
-        try{
-            String addy = "Could not find address";
-            List<Address> listAddresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-
-            if (listAddresses != null && listAddresses.size() > 0) {
-
-
-                Log.i("PlaceInfo", listAddresses.get(0).toString());
-                addy = "Address: \n";
-                if(listAddresses.get(0).getSubThoroughfare() != null){
-                    addy += listAddresses.get(0).getSubThoroughfare() + " ";
-                }
-                if(listAddresses.get(0).getThoroughfare() != null){
-                    addy += listAddresses.get(0).getThoroughfare() + "\n";
-                }
-                if(listAddresses.get(0).getLocality() != null){
-                    addy += listAddresses.get(0).getLocality() + "\n";
-                }
-                if(listAddresses.get(0).getPostalCode() != null){
-                    addy += listAddresses.get(0).getPostalCode() + "\n";
-                }
-                if(listAddresses.get(0).getCountryName() != null){
-                    addy += listAddresses.get(0).getCountryName() + "\n";
-                }
-            }
-
-            //TextView address = (TextView) findViewById(R.id.textView2);
-            //address.setText(addy);
-            Log.println(Log.ASSERT,"TRY",addy);
-            //
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-//    private void displayMyLocation() {
-//        //check if permission is granted
-//        int permission = ActivityCompat.checkSelfPermission(this.getApplicationContext(),
-//                android.Manifest.permission.ACCESS_FINE_LOCATION);
-//        //If not, ask for it
-//        if (permission == PackageManager.PERMISSION_DENIED) {
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-//        }
-//
-//        else {
-//            mFusedLocationProviderClient.getLastLocation()
-//                    .addOnCompleteListener(this, task -> {
-//                        Location mLastKnownLocation = task.getResult();
-//                        if (task.isSuccessful() && mLastKnownLocation != null) {
-//
-//                            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_map);
-//                            mapFragment.getMapAsync(googleMap -> {
-//                                mMap = googleMap;
-//
-//                                mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(),
-//                                        mLastKnownLocation.getLongitude())).title("Current Location"));
-//                                displayMyLocation();
-//                            });
-//                        }
-//
-//                    });
-//        }
-//
-//
-//    }
 
     private NavigationBarView.OnItemSelectedListener bottomnavFunction = new NavigationBarView.OnItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            //Log.println(Log.ASSERT,"fragments", "frags created");
             Fragment fragment = null;
             switch(item.getItemId()) {
                 case R.id.home:
