@@ -1,36 +1,39 @@
 package com.example.musictags;
 
 import android.content.Context;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Button;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
-public class QueueCustomAdapter extends BaseAdapter implements ListAdapter {
-    private ArrayList<String> list = new ArrayList<String>();
+public class QueueCustomAdapter extends ArrayAdapter<TrackNode> implements ListAdapter {
+    private Queue<TrackNode> tracks = new LinkedList<TrackNode>();
     private Context context;
 
-    public QueueCustomAdapter(ArrayList<String> list, Context context) {
-        this.list = list;
-        this.context = context;
+
+    public QueueCustomAdapter(ArrayList<TrackNode> tracks, Context context) {
+        super(context,0,tracks);
     }
+
+
 
     @Override
     public int getCount() {
-        return list.size();
+        return tracks.size();
     }
 
     @Override
-    public Object getItem(int pos) {
-        return list.get(pos);
+    public TrackNode getItem(int pos) {
+
+        return tracks.peek();
     }
 
     @Override

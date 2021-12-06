@@ -16,13 +16,18 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.telecom.Call;
 import android.util.Log;
 import android.view.MenuItem;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
+import com.spotify.android.appremote.api.PlayerApi;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 
+import com.spotify.protocol.client.CallResult;
+import com.spotify.protocol.client.Result;
 import com.spotify.protocol.client.Subscription;
+import com.spotify.protocol.types.Empty;
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
 
@@ -38,6 +43,7 @@ import com.google.android.material.navigation.NavigationBarView;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private NavigationBarView bottomNavigationView;
@@ -47,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String CLIENT_ID = "10ee2098620d4a0b8fde685d19d8a0ab";
     private static final String REDIRECT_URI = "http://localhost:8888/callback";
     //private static final String REDIRECT_URI = "http://com.yourdomain.musictags/callback;
-    private SpotifyAppRemote mSpotifyAppRemote;
+    private static SpotifyAppRemote mSpotifyAppRemote;
     private static GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient; //Save the instance
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7;
@@ -72,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                         //Spotify app remote created. Use throughout app
                         mSpotifyAppRemote = spotifyAppRemote;
-                        Log.d("MainActivity", "Connected! Yay!");
+                        Log.i("MainActivity", "Connected! Yay!");
 
                         // Now you can start interacting with App Remote
                         //connected();
@@ -81,10 +87,14 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Throwable throwable) {
                         Log.e("MainActivity", throwable.getMessage(), throwable);
-
+                        Log.i("fail","fails to connect to spotify");
                         // Something went wrong when attempting to connect! Handle errors here
                     }
                 });
+
+        if(mSpotifyAppRemote==null){
+            Log.i("weord", "wored");
+        }
 
        // mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -148,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateLocationInfo(Location location) {
-        Log.i("LocationInfo", location.toString());
+        //Log.i("LocationInfo", location.toString());
 
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
 
@@ -159,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
             if (listAddresses != null && listAddresses.size() > 0) {
 
 
-                Log.i("PlaceInfo", listAddresses.get(0).toString());
+                //Log.i("PlaceInfo", listAddresses.get(0).toString());
                 addy = "Address: \n";
                 if(listAddresses.get(0).getSubThoroughfare() != null){
                     addy += listAddresses.get(0).getSubThoroughfare() + " ";
@@ -180,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
 
             //TextView address = (TextView) findViewById(R.id.textView2);
             //address.setText(addy);
-            Log.println(Log.ASSERT,"TRY",addy);
+            //Log.println(Log.ASSERT,"TRY",addy);
             //
         } catch (IOException e) {
             e.printStackTrace();
@@ -220,6 +230,62 @@ public class MainActivity extends AppCompatActivity {
 //
 //    }
 
+
+    /*
+        Plays a track based on a track uri
+        Parameters: TrackNode
+        Return: true if successfully plays song and false if fails. can throw error if we like
+        TODO
+     */
+    public static boolean play(TrackNode track){
+        String uri = track.uri;
+        CallResult<Empty> playCall = mSpotifyAppRemote.getPlayerApi().play(uri);
+        Result<Empty> playResult = playCall.await(10, TimeUnit.SECONDS);
+        if (playResult.isSuccessful()) {
+            return true;
+            // have some fun with playerState
+        } else {
+            Throwable error = playResult.getError();
+            // try to have some fun with the error
+            return false;
+        }
+    }
+
+    /*
+        Gets PlayerApi
+        Parameters:
+        Return PlayerApi. null if fails
+        TODO
+     */
+    public static PlayerApi getPlayerApi(){
+         return mSpotifyAppRemote.getPlayerApi();
+    }
+
+    /*
+        Gets PlayerState
+        Parameters:
+        Return PlayerApi. null if fails
+        NOT CURRENTLY BEING CALLEDD TODO
+     */
+    public static PlayerState getPlayerState() {
+        PlayerApi playerApi = getPlayerApi();
+        CallResult<PlayerState> playerStateCall = playerApi.getPlayerState();
+        Result<PlayerState> playerStateResult = playerStateCall.await(5,TimeUnit.SECONDS);
+        if(playerStateResult.isSuccessful()){
+            return playerStateResult.getData();
+        }else if(playerStateResult == null){
+            Log.i("playerstatenull","playstatenull");
+            return null;
+        }else{
+            Throwable error = playerStateResult.getError();
+
+            return playerStateCall.await(20,TimeUnit.SECONDS).getData();
+        }
+    }
+
+
+
+
     private NavigationBarView.OnItemSelectedListener bottomnavFunction = new NavigationBarView.OnItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -243,4 +309,10 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     };
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+
+    }
 }
