@@ -10,7 +10,7 @@ import java.util.List;
 public class TrackNode extends Track {
 
     //add any relevant information
-
+//
     public TrackNode(Artist artist, List<Artist> artists, Album album, long duration, String name, String uri, ImageUri imageUri, boolean isEpisode, boolean isPodcast) {
         super(artist, artists, album, duration, name, uri, imageUri, isEpisode, isPodcast);
     }

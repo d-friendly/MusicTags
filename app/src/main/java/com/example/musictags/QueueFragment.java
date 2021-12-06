@@ -34,7 +34,7 @@ public class QueueFragment extends Fragment {
         //add list to list view
         ListView listView = (ListView) v.findViewById(R.id.listView);
         //PLACHOLDER DATA
-
+    //
 
         //TODO gets an arraylist of tracks from another 'backend'?
         //tracks =

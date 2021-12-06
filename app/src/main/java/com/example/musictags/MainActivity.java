@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i("playerstatenull","playstatenull");
             return null;
         }else{
-            Throwable error = playerStateResult.getError();
+            //Throwable error = playerStateResult.getError();
 
             return playerStateCall.await(20,TimeUnit.SECONDS).getData();
         }
