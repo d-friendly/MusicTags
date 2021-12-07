@@ -67,14 +67,17 @@ public class QueueFragment extends Fragment {
 
 
 
-        CallResult<Capabilities> capabilitiesCallResult= MainActivity.getUserApi().getCapabilities();
-        Result<Capabilities> capabilitiesResult = capabilitiesCallResult.await(5,TimeUnit.SECONDS);
+//        CallResult<Capabilities> capabilitiesCallResult= MainActivity.getUserApi().getCapabilities();
+//        Result<Capabilities> capabilitiesResult = capabilitiesCallResult.await(5,TimeUnit.SECONDS);
 //        if(capabilitiesResult.isSuccessful()) {
 //            UserApi uAPI = (UserApi) capabilitiesResult.getData();
 //            Log.i("interested","got userapi");
 //        }else{
 //            Log.i("interested","didnt get userapi");
 //        }
+
+
+
 //        if(MainActivity.getPlayerApi().getPlayerState().await(10, TimeUnit.SECONDS).getData().track==null){
 //            //Track track = new Track()
 //        }else{

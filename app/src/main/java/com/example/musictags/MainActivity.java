@@ -71,17 +71,6 @@ public class MainActivity extends AppCompatActivity {
                         .setRedirectUri(REDIRECT_URI)
                         .showAuthView(true)
                         .build();
-        onStart(connectionParams);
-
-
-        bottomNavigationView = findViewById(R.id.bottomnav);
-        bottomNavigationView.setOnItemSelectedListener(bottomnavFunction);
-
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, new HomeFragment()).commit();
-    }
-
-    protected void onStart(ConnectionParams connectionParams) {
-        super.onStart();
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
         SpotifyAppRemote.connect(this, connectionParams,
                 new Connector.ConnectionListener() {
@@ -94,6 +83,18 @@ public class MainActivity extends AppCompatActivity {
 
                         // Now you can start interacting with App Remote
                         //connected();
+                        mSpotifyAppRemote.getPlayerApi()
+                                .subscribeToPlayerState()
+                                .setEventCallback(playerState -> {
+                                    final Track track = playerState.track;
+                                    if (track != null) {
+                                        Log.d("MainActivity", track.name + " by " + track.artist.name);
+                                        //return track;
+                                    }else{
+                                        Log.d("MainActivity", "fail");
+
+                                    }
+                                });
                     }
 
                     @Override
@@ -103,7 +104,14 @@ public class MainActivity extends AppCompatActivity {
                         // Something went wrong when attempting to connect! Handle errors here
                     }
                 });
+
+
+        bottomNavigationView = findViewById(R.id.bottomnav);
+        bottomNavigationView.setOnItemSelectedListener(bottomnavFunction);
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, new HomeFragment()).commit();
     }
+
 
     /*
         Plays a track based on a track uri
@@ -116,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
         CallResult<Empty> playCall = mSpotifyAppRemote.getPlayerApi().play(uri);
         Result<Empty> playResult = playCall.await(10, TimeUnit.SECONDS);
         if (playResult.isSuccessful()) {
+
             return true;
             // have some fun with playerState
         } else {
@@ -153,15 +162,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public static void getPlayerState() {
         // Subscribe to PlayerState
-        mSpotifyAppRemote.getPlayerApi()
-                .subscribeToPlayerState()
-                .setEventCallback(playerState -> {
-                    final Track track = playerState.track;
-                    if (track != null) {
-                        Log.d("MainActivity", track.name + " by " + track.artist.name);
-                        //return track;
-                    }
-                });
+
     }
 
 
