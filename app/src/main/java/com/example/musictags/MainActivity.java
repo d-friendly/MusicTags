@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                                         Log.d("MainActivity", track.name + " by " + track.artist.name);
                                         //return track;
                                     }else{
-                                        Log.d("MainActivity", "fail");
+                                        Log.d("MainActivity", "fail1");
 
                                     }
                                 });

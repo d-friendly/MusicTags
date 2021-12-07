@@ -73,7 +73,7 @@ public class QueueFragment extends Fragment {
 //            UserApi uAPI = (UserApi) capabilitiesResult.getData();
 //            Log.i("interested","got userapi");
 //        }else{
-//            Log.i("interested","didnt get userapi");
+//            Log.i("interested","diddddnt get userapi");
 //        }
 
 
