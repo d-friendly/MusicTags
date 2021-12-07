@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,15 @@ import android.widget.ListView;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import com.spotify.android.appremote.api.UserApi;
+import com.spotify.protocol.client.CallResult;
+import com.spotify.protocol.client.Result;
+import com.spotify.protocol.types.Album;
+import com.spotify.protocol.types.Artist;
+import com.spotify.protocol.types.Capabilities;
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
 
@@ -47,10 +56,36 @@ public class QueueFragment extends Fragment {
 //            MainActivity.getPlayerApi().skipNext();
 //            Log.i("hellothere","iiii");
 //        }
-//        TrackNode tn = new TrackNode(MainActivity.getPlayerState().track);
+
+        Artist artist = new Artist("D Smoke", "spotify:track:1icmxr6OxT03H4dHGOiLFX");
+        List<Artist> artists = new ArrayList<Artist>();
+        artists.add(artist);
+        Album album = new Album("D Smoke", "spotify:track:1icmxr6OxT03H4dHGOiLFX");
+        long duration = 239000;
+        String name = "D Smoke";
+        String uri = "spotify:track:1icmxr6OxT03H4dHGOiLFX";
+
+
+
+        CallResult<Capabilities> capabilitiesCallResult= MainActivity.getUserApi().getCapabilities();
+        Result<Capabilities> capabilitiesResult = capabilitiesCallResult.await(5,TimeUnit.SECONDS);
+//        if(capabilitiesResult.isSuccessful()) {
+//            UserApi uAPI = (UserApi) capabilitiesResult.getData();
+//            Log.i("interested","got userapi");
+//        }else{
+//            Log.i("interested","didnt get userapi");
+//        }
+//        if(MainActivity.getPlayerApi().getPlayerState().await(10, TimeUnit.SECONDS).getData().track==null){
+//            //Track track = new Track()
+//        }else{
+//            Track track = MainActivity.getPlayerApi().getPlayerState().await(10, TimeUnit.SECONDS).getData().track;
+//        }
+
+
+//        TrackNode tn = new TrackNode(track);
 //        tracks = new ArrayList<TrackNode>();
 //        tracks.add(tn);
-//        data = new ArrayList<String>(Arrays.asList("111,222,333,444,555,666,dfdfd,dfsdfdsf,dfsdfsdf,dfdfsdga,fdfafds,dsfdsfs,dfsdfs,dfs,df,sdf,sd,dfdf,sdf,sdf,d,fd,fd,f,d,fd,f,df,df".split(",")));
+////        data = new ArrayList<String>(Arrays.asList("111,222,333,444,555,666,dfdfd,dfsdfdsf,dfsdfsdf,dfdfsdga,fdfafds,dsfdsfs,dfsdfs,dfs,df,sdf,sd,dfdf,sdf,sdf,d,fd,fd,f,d,fd,f,df,df".split(",")));
 //        listView.setAdapter(new QueueCustomAdapter(tracks, getContext()));
         // Inflate the layout for this fragment
         return v;

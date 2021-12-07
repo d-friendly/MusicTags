@@ -24,6 +24,7 @@ import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.PlayerApi;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 
+import com.spotify.android.appremote.api.UserApi;
 import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.client.Result;
 import com.spotify.protocol.client.Subscription;
@@ -70,7 +71,18 @@ public class MainActivity extends AppCompatActivity {
                         .setRedirectUri(REDIRECT_URI)
                         .showAuthView(true)
                         .build();
+        onStart(connectionParams);
 
+
+        bottomNavigationView = findViewById(R.id.bottomnav);
+        bottomNavigationView.setOnItemSelectedListener(bottomnavFunction);
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, new HomeFragment()).commit();
+    }
+
+    protected void onStart(ConnectionParams connectionParams) {
+        super.onStart();
+        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
         SpotifyAppRemote.connect(this, connectionParams,
                 new Connector.ConnectionListener() {
 
@@ -91,15 +103,7 @@ public class MainActivity extends AppCompatActivity {
                         // Something went wrong when attempting to connect! Handle errors here
                     }
                 });
-
-
-        bottomNavigationView = findViewById(R.id.bottomnav);
-        bottomNavigationView.setOnItemSelectedListener(bottomnavFunction);
-
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, new HomeFragment()).commit();
     }
-
-
 
     /*
         Plays a track based on a track uri
@@ -132,27 +136,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*
+        Gets UserAPI
+        Parameters:
+        Return PlayerApi. null if fails
+        TODO
+     */
+    public static UserApi getUserApi(){
+        return mSpotifyAppRemote.getUserApi();
+    }
+
+    /*
         Gets PlayerState
         Parameters:
         Return PlayerApi. null if fails
         NOT CURRENTLY BEING CALLEDD TODO
      */
-    public static PlayerState getPlayerState() {
-        PlayerApi playerApi = getPlayerApi();
-        CallResult<PlayerState> playerStateCall = playerApi.getPlayerState();
-        Result<PlayerState> playerStateResult = playerStateCall.await(5,TimeUnit.SECONDS);
-        if(playerStateResult.isSuccessful()){
-            return playerStateResult.getData();
-        }else if(playerStateResult == null){
-            Log.i("playerstatenull","playstatenull");
-            return null;
-        }else{
-            //Throwable error = playerStateResult.getError();
-
-            return playerStateCall.await(20,TimeUnit.SECONDS).getData();
-        }
+    public static void getPlayerState() {
+        // Subscribe to PlayerState
+        mSpotifyAppRemote.getPlayerApi()
+                .subscribeToPlayerState()
+                .setEventCallback(playerState -> {
+                    final Track track = playerState.track;
+                    if (track != null) {
+                        Log.d("MainActivity", track.name + " by " + track.artist.name);
+                        //return track;
+                    }
+                });
     }
-
 
 
 
