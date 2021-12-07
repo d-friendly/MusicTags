@@ -60,15 +60,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         lastSong.setOnClickListener(this);
         ImageButton play = (ImageButton) homeV.findViewById(R.id.playButton);
         play.setOnClickListener(this);
+        ImageButton pin = (ImageButton) homeV.findViewById(R.id.pin);
+        pin.setOnClickListener(this);
+
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.getActivity());
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.fragment_map);
 
-        mapFragment.getMapAsync(googleMap -> {
-            displayMyLocation();
-        });
+//        mapFragment.getMapAsync(googleMap -> {
+//            displayMyLocation();
+//        });
 
         //returns layout for this fragment
         return homeV;
@@ -93,6 +96,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             case R.id.nextSongButton:
                 //TODO next song button code
                 break;
+            case R.id.pin:
+                displayMyLocation();
             default:
                 break;
         }
