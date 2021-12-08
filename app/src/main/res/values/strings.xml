@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">MusicTags</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string-array name="search_options">
+        <item>Play Song</item>
+        <item>Pin Song</item>
+    </string-array>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

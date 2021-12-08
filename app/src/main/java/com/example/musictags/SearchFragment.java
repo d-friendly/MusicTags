@@ -84,12 +84,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
                 }.start();
 
-
-
-
-
-
-
                 //listView.setAdapter(new SearchCustomAdapter(searchResults, getContext()));
 
                 break;
@@ -171,9 +165,11 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
                             searchResults.add(trackNode);
 
-                            listView.setAdapter(new SearchCustomAdapter(searchResults, getContext()));
+
 
                         }
+                        //Put it outside
+                        listView.setAdapter(new SearchCustomAdapter(searchResults, getContext()));
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -190,12 +186,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                 //TODO: Keep losing authorization, need to fix. Also need to make it specific to user
                 String CLIENT_SECRET = "f484de60c4d445f88ac37e899cb46e65";
                 String tokenURL = "https://accounts.spotify.com/api/token";
-
-
-
-
-
-
 
                 params.put("Authorization", "Bearer BQBwD2FF1WCCZBWtDBuHI-JSnwPB0IIiSQaTqIh8ZeICim2zkaXsY5JjLfwi4Q8-zbk6lKBLGljbvRpOILQSJZGXGyuvZ-zfrdO8wohjvlP9WzFDC5ihw2U3ay8NOlsx_mmmthGqmNW6sLBd2S2KGzc8wBFWLzJMOmk");
 

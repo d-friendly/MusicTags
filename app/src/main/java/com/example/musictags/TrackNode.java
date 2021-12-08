@@ -9,6 +9,10 @@ import java.util.List;
 
 public class TrackNode extends Track {
 
+
+    //need name, uri, artist, duration in milliseconds, imageUri, album
+    //isEpisode and isPodcast always false
+
     //add any relevant information
 //
     public TrackNode(Artist artist, List<Artist> artists, Album album, long duration, String name, String uri, ImageUri imageUri, boolean isEpisode, boolean isPodcast) {

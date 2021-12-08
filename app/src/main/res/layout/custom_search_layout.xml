@@ -13,6 +13,10 @@
         android:id="@+id/coverArt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minHeight="100dp"
+        android:minWidth="100dp"
+        android:maxHeight="100dp"
+        android:maxWidth="100dp"
         android:contentDescription="TODO"
         android:layout_weight="3"
         />
@@ -49,14 +53,9 @@
         android:layout_alignParentRight="true"
         />
 
-    <ImageView
-        android:id="@+id/ellipsisMenu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_menu_button"
-        android:layout_marginLeft="10dp"
-        android:layout_alignParentRight="true"
-        />
+
+
+
 
 
 </LinearLayout>

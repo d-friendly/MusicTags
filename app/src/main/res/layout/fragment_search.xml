@@ -20,9 +20,11 @@
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="60dp"
-            android:layout_height="50dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
             android:layout_weight="1"
-            android:src="@drawable/ic_baseline_pin_drop_24" />
+            android:background="@drawable/ic_baseline_pin_drop_24"
+             />
 
         <EditText
             android:id="@+id/searchBox"
