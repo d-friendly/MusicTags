@@ -92,6 +92,9 @@ public class SearchCustomAdapter extends BaseAdapter implements ListAdapter {
                             case "Play Song":
                                 Toast.makeText(view.getContext(), "You Clicked play",   Toast.LENGTH_SHORT).show();
                                 //TODO: set current song play to this track uri
+
+                                MainActivity.play(list.get(i));
+
                                 break;
                             case "Pin Song":
                                 Toast.makeText(view.getContext(), "You Clicked pin", Toast.LENGTH_SHORT).show();

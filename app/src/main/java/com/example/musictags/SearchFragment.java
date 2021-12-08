@@ -41,16 +41,14 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
     public SearchFragment() {
         // Required empty public constructor
-
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         final View v = inflater.inflate(R.layout.fragment_search, container, false);
-        //add list to list view
+
         listView = (ListView) v.findViewById(R.id.listView);
 
         //PLACEHOLDER DATA
@@ -73,17 +71,21 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.searchButton:
                 String query = String.valueOf(searchBox.getText());
+
+                querySong(query);
                 //searchResults = new ArrayList<TrackNode>();
 
-
+                /*
                 new Thread(){
                 @Override
                     public void run() {
-                        querySong(query);
+
                     }
 
                 }.start();
 
+
+                */
                 //listView.setAdapter(new SearchCustomAdapter(searchResults, getContext()));
 
                 break;
@@ -168,7 +170,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
 
                         }
-                        //Put it outside
+
                         listView.setAdapter(new SearchCustomAdapter(searchResults, getContext()));
 
                     } catch (JSONException e) {
@@ -187,7 +189,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                 String CLIENT_SECRET = "f484de60c4d445f88ac37e899cb46e65";
                 String tokenURL = "https://accounts.spotify.com/api/token";
 
-                params.put("Authorization", "Bearer BQBwD2FF1WCCZBWtDBuHI-JSnwPB0IIiSQaTqIh8ZeICim2zkaXsY5JjLfwi4Q8-zbk6lKBLGljbvRpOILQSJZGXGyuvZ-zfrdO8wohjvlP9WzFDC5ihw2U3ay8NOlsx_mmmthGqmNW6sLBd2S2KGzc8wBFWLzJMOmk");
+                params.put("Authorization", "Bearer BQB1HiXcuF87_fFvyaHrfOYI3MUDPuYTlv-FPbVUqFq8RH8ZXgWCTktXmbyGV1NECPduajAPQI6-jOQ91Q22tfKL-lLJCMe0VT6xJiQ8xtrS_cjYLJ1DS1OszPQYLwuC0BlRWkHDvHw-JBQBPuN4yWwfWMRPWCocSZ4");
 
 
                 return params;
