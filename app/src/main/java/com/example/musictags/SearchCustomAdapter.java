@@ -91,9 +91,11 @@ public class SearchCustomAdapter extends BaseAdapter implements ListAdapter {
                         switch (menuItem.getTitle().toString()){
                             case "Play Song":
                                 Toast.makeText(view.getContext(), "You Clicked play",   Toast.LENGTH_SHORT).show();
+                                //TODO: set current song play to this track uri
                                 break;
                             case "Pin Song":
                                 Toast.makeText(view.getContext(), "You Clicked pin", Toast.LENGTH_SHORT).show();
+                                //TODO: assign TrackNode to current coordinates
                                 break;
                             default:
                                 Toast.makeText(view.getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
