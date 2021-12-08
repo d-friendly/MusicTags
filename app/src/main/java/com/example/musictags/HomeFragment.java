@@ -92,6 +92,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 //TODO down vote code
                 break;
             case R.id.playButton:
+
                 if(MainActivity.isPaused){
                     MainActivity.resume();
                 }else{
@@ -104,6 +105,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
             case R.id.nextSongButton:
                 MainActivity.skip();
+
                 break;
             case R.id.pin:
                 //SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()

@@ -80,7 +80,6 @@ public class QueueFragment extends Fragment {
                 //  if firebase allows us to sort said info
                 //      call algorithm for creating queue / might not need a algo just convert to arraylist
                 //tell adapter that underlying list has changed / reset adapter.
-                //
             }
         });
 
