@@ -8,8 +8,6 @@ import com.spotify.protocol.types.Track;
 import java.util.List;
 
 public class TrackNode extends Track {
-
-
     //need name, uri, artist, duration in milliseconds, imageUri, album
     //isEpisode and isPodcast always false
 
@@ -20,6 +18,8 @@ public class TrackNode extends Track {
     }
 
     public TrackNode(Track track){
+
         super(track.artist,track.artists,track.album,track.duration,track.name,track.uri,track.imageUri, track.isEpisode, track.isPodcast);
     }
+
 }

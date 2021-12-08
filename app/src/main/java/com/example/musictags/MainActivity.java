@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     private static GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient; //Save the instance
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7;
+    public static boolean playFromAppQueue=false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +91,17 @@ public class MainActivity extends AppCompatActivity {
                                 .setEventCallback(playerState -> {
                                     final Track track = playerState.track;
                                     isPaused = playerState.isPaused ;
+
+                                    if(playerState.playbackPosition == playerState.track.duration - 1 && playFromAppQueue){
+                                        //TODO handling end up song queuing
+                                        //get next tracknode from queue
+                                        //get updated arraylist representative of queue (might be redudent step)
+                                        //play next tracknode
+                                        //notify adpater that data has changed to update listview
+                                        //           if this doesnt work we should try reattaching to customadapter(dont like this option, work around at best)
+                                        //myAdapter.mySetNewContentMethod(someNewContent);
+                                        //myAdapter.notifyDataSetChanged();
+                                    }
                                     if (track != null) {
                                         Log.d("MainActivity", track.name + " by " + track.artist.name);
                                         //return track;
@@ -221,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
         Plays a track based on a track uri
         Parameters: TrackNode
         Return: true if successfully plays song and false if fails. can throw error if we like
-        TODO
+
      */
     public static boolean play(TrackNode track){
         new Thread() {
@@ -235,6 +248,7 @@ public class MainActivity extends AppCompatActivity {
                     if (playResult.isSuccessful()) {
                         Log.i("play","working");
                         // have some fun with playerState
+
                     } else {
                         Throwable error = playResult.getError();
                         // try to have some fun with the error
@@ -320,6 +334,8 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     };
+
+
     @Override
     protected void onStop() {
         super.onStop();

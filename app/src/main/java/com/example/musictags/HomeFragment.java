@@ -117,6 +117,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
 
+
+
+    //TODO
+    //decide if this is displaying only the 'playing queue of songs'/ close ones
+    // or renders based on screen location*
     private void displayMyLocation() {
         //Log.println(Log.ASSERT, "are we here", "in displayMyLocation()");
         //check if permission is granted

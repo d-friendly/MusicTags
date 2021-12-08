@@ -23,7 +23,6 @@ public class QueueCustomAdapter extends BaseAdapter implements ListAdapter {
 
 
     public QueueCustomAdapter(ArrayList<TrackNode> tracks, Context context) {
-
         this.tracks=tracks;
         this.context=context;
     }

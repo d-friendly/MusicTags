@@ -34,6 +34,8 @@ public class QueueFragment extends Fragment {
     public ArrayList<TrackNode> tracks;
     public TrackNode tn;
     private ArrayList<String> data;
+
+
 //    public static ArrayList<TrackNode> trackList = SearchFragment.searchResults;
     public QueueFragment() {
         // Required empty public constructor
@@ -45,14 +47,9 @@ public class QueueFragment extends Fragment {
         final View v = inflater.inflate(R.layout.fragment_queue, container, false);
         //add list to list view
         ListView listView = (ListView) v.findViewById(R.id.listView);
-        //PLACHOLDER DATA
-    //
-
+        //PLACEHOLDER DATA
         //TODO gets an arraylist of tracks from another 'backend'?
         //tracks =
-
-
-//
 
         //TODO this is giving me errors but spotify will connect with it commented out
 //        if(MainActivity.getPlayerState()==null){
@@ -75,21 +72,35 @@ public class QueueFragment extends Fragment {
         Button yourButton = (Button) v.findViewById(R.id.button);
         //set onclicklistener for your button
         yourButton.setOnClickListener(new View.OnClickListener() {
+
+            //TODO ALGO potential
             @Override
             public void onClick(View v) {
-                MainActivity.play(tn);
+                //query firebase for songs based on parameters
+                //  if firebase allows us to sort said info
+                //      call algorithm for creating queue / might not need a algo just convert to arraylist
+                //tell adapter that underlying list has changed / reset adapter.
+                //
             }
         });
 
 
         tracks = new ArrayList<TrackNode>();
         tracks.add(tn);
+        //Get Queue
+
+
+
 //        data = new ArrayList<String>(Arrays.asList("111,222,333,444,555,666,dfdfd,dfsdfdsf,dfsdfsdf,dfdfsdga,fdfafds,dsfdsfs,dfsdfs,dfs,df,sdf,sd,dfdf,sdf,sdf,d,fd,fd,f,d,fd,f,df,df".split(",")));
         listView.setAdapter(new QueueCustomAdapter(tracks, getContext()));
 //        listView.setAdapter(new QueueCustomAdapter(trackList, getContext()));
         // Inflate the layout for this fragment
         return v;
     }
+//
+//    public ArrayList<TrackNode> getQueue(){
+//
+//    }
 }
 
 
