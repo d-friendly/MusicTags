@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.lang.reflect.Array;
@@ -24,13 +25,14 @@ import com.spotify.protocol.client.Result;
 import com.spotify.protocol.types.Album;
 import com.spotify.protocol.types.Artist;
 import com.spotify.protocol.types.Capabilities;
+import com.spotify.protocol.types.ImageUri;
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
 
 public class QueueFragment extends Fragment {
 
     public ArrayList<TrackNode> tracks;
-
+    public TrackNode tn;
     private ArrayList<String> data;
     public QueueFragment() {
         // Required empty public constructor
@@ -64,6 +66,19 @@ public class QueueFragment extends Fragment {
         long duration = 239000;
         String name = "D Smoke";
         String uri = "spotify:track:1icmxr6OxT03H4dHGOiLFX";
+        ImageUri iURI = new ImageUri("String");
+        boolean isEpisode = false;
+        boolean isPodcast = false;
+        Track track = new Track(artist,artists,album,duration,name,uri,iURI,isEpisode,isPodcast);
+        tn = new TrackNode(track);
+        Button yourButton = (Button) v.findViewById(R.id.button);
+        //set onclicklistener for your button
+        yourButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.play(tn);
+            }
+        });
 
 
 
@@ -92,10 +107,6 @@ public class QueueFragment extends Fragment {
 //        listView.setAdapter(new QueueCustomAdapter(tracks, getContext()));
         // Inflate the layout for this fragment
         return v;
-    }
-
-    public void playLocalQueue(){
-
     }
 
 

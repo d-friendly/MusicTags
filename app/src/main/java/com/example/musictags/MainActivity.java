@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+
                         //Spotify app remote created. Use throughout app
                         mSpotifyAppRemote = spotifyAppRemote;
                         Log.i("MainActivity", "Connected! Yay!");
@@ -90,12 +91,12 @@ public class MainActivity extends AppCompatActivity {
                                     if (track != null) {
                                         Log.d("MainActivity", track.name + " by " + track.artist.name);
                                         //return track;
-                                    }else{
+                                    } else {
                                         Log.d("MainActivity", "fail1");
-
                                     }
                                 });
                     }
+
 
                     @Override
                     public void onFailure(Throwable throwable) {
@@ -114,24 +115,60 @@ public class MainActivity extends AppCompatActivity {
 
 
     /*
+    Runs skip operation in seperate thread.
+     */
+    public static boolean skip(){
+        new Thread() {
+            @Override
+            public void run() {
+
+                if(mSpotifyAppRemote!=null) {
+                    CallResult<Empty> skipCall = mSpotifyAppRemote.getPlayerApi().skipNext();
+                    Result<Empty> skipResult = skipCall.await(10, TimeUnit.SECONDS);
+                    if (skipResult.isSuccessful()) {
+                        Log.i("play","workingSkip");
+                        // have some fun with playerState
+
+                    } else {
+                        Throwable error = skipResult.getError();
+                        // try to have some fun with the error
+                        Log.i("play","failSkip") ;
+                    }
+                }
+            }
+
+        }.start();
+        return true;
+    }
+
+    /*
         Plays a track based on a track uri
         Parameters: TrackNode
         Return: true if successfully plays song and false if fails. can throw error if we like
         TODO
      */
     public static boolean play(TrackNode track){
-        String uri = track.uri;
-        CallResult<Empty> playCall = mSpotifyAppRemote.getPlayerApi().play(uri);
-        Result<Empty> playResult = playCall.await(10, TimeUnit.SECONDS);
-        if (playResult.isSuccessful()) {
+        new Thread() {
+            @Override
+            public void run() {
+                String uri = track.uri;
 
-            return true;
-            // have some fun with playerState
-        } else {
-            Throwable error = playResult.getError();
-            // try to have some fun with the error
-            return false;
-        }
+                if(mSpotifyAppRemote!=null) {
+                    CallResult<Empty> playCall = mSpotifyAppRemote.getPlayerApi().play(uri);
+                    Result<Empty> playResult = playCall.await(10, TimeUnit.SECONDS);
+                    if (playResult.isSuccessful()) {
+                        Log.i("play","working");
+                        // have some fun with playerState
+                    } else {
+                        Throwable error = playResult.getError();
+                        // try to have some fun with the error
+                        Log.i("play","fail") ;
+                    }
+                }
+            }
+
+        }.start();
+        return true;
     }
 
     /*
@@ -163,6 +200,20 @@ public class MainActivity extends AppCompatActivity {
     public static void getPlayerState() {
         // Subscribe to PlayerState
 
+    }
+
+
+    /*
+        DisplayQueue from different thread.
+     */
+    private void displayQueue(){
+        new Thread() {
+            @Override
+            public void run() {
+
+            }
+
+        }.start();
     }
 
 

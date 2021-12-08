@@ -58,7 +58,7 @@ public class QueueCustomAdapter extends ArrayAdapter<TrackNode> implements ListA
         ImageView coverArt = (ImageView) view.findViewById(R.id.coverArt);
         //TODO
         //temporary data to show UI
-        coverArt.setImageResource(R.drawable.kanye);
+        coverArt.setImageResource(R.drawable.ic_home);
         TextView tvSong= (TextView)view.findViewById(R.id.songTitle);
         tvSong.setText("Song Title");
         TextView tvArtist= (TextView)view.findViewById(R.id.artist);
