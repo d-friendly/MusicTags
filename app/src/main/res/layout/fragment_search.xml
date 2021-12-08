@@ -19,20 +19,26 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_gravity="left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_home"
-            android:layout_weight="1"/>
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_baseline_pin_drop_24" />
 
         <EditText
             android:id="@+id/searchBox"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="4"
+            android:layout_weight="6"
             android:background="@drawable/search_bubble"
             android:inputType="textPersonName"
             android:hint="Search" />
+
+        <Button
+            android:id="@+id/searchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Search"/>
 
 
     </LinearLayout>

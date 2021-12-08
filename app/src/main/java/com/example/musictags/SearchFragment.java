@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -17,6 +18,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.spotify.protocol.types.Album;
+import com.spotify.protocol.types.Artist;
+import com.spotify.protocol.types.ImageUri;
+import com.spotify.protocol.types.Track;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,19 +30,20 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-
-public class SearchFragment extends Fragment {
-    private ArrayList<String> data;
-    public String jsonString;
 
 
+public class SearchFragment extends Fragment implements View.OnClickListener {
+    private ArrayList<TrackNode> searchResults;
+    private EditText searchBox;
+    private ListView listView;
 
     public SearchFragment() {
         // Required empty public constructor
-    }
 
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,56 +51,127 @@ public class SearchFragment extends Fragment {
         // Inflate the layout for this fragment
         final View v = inflater.inflate(R.layout.fragment_search, container, false);
         //add list to list view
-        ListView listView = (ListView) v.findViewById(R.id.listView);
+        listView = (ListView) v.findViewById(R.id.listView);
+
         //PLACEHOLDER DATA
-        data = new ArrayList<String>(Arrays.asList("111,222,333,444,555,666".split(",")));
-        listView.setAdapter(new SearchCustomAdapter(data, getContext()) );
-
-        EditText searchText = (EditText) v.findViewById(R.id.searchBox);
+        //searchResults = new ArrayList<String>(Arrays.asList("111,222,333,444,555,666".split(",")));
 
 
-        String searchItem = "IGORS THEME";
-        querySong(searchItem);
+        searchBox = (EditText) v.findViewById(R.id.searchBox);
+        searchResults = new ArrayList<TrackNode>();
 
-        //System.out.println(jsonString);
-
+        Button b = (Button) v.findViewById(R.id.searchButton);
+        b.setOnClickListener(this);
 
 
         return v;
     }
 
 
+    public void onClick(View v) {
 
-    //TODO: Change String Request to JSON
+        switch (v.getId()) {
+            case R.id.searchButton:
+                String query = String.valueOf(searchBox.getText());
+                //searchResults = new ArrayList<TrackNode>();
 
-    public void addToSearch(String name, String uri) {
+
+                new Thread(){
+                @Override
+                    public void run() {
+                        querySong(query);
+                    }
+
+                }.start();
+
+
+
+
+
+
+
+                //listView.setAdapter(new SearchCustomAdapter(searchResults, getContext()));
+
+                break;
+        }
 
     }
 
 
     public void querySong(String searchItem) {
         RequestQueue queue = Volley.newRequestQueue(this.getContext());
-        String tempJSONString;
-        String url = "https://api.spotify.com/v1/search?type=track&q=" + searchItem.trim();
-        String name;
-        String uri;
 
+        String url = "https://api.spotify.com/v1/search?type=track&q=" + searchItem.trim();
+
+
+        //Send request to Spotify Web API
         StringRequest getRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
-
                     try {
 
                         //System.out.println(response.toString());
 
-                        JSONObject obj = new JSONObject(response);
-                        JSONObject a = obj.optJSONObject("tracks");
-                        JSONArray arr = new JSONArray(a.getString("items"));
+                        //Convert response to JSONObject and revise to format we need
+                        JSONObject spotifyResponse = new JSONObject(response);
+                        JSONObject tracks = spotifyResponse.optJSONObject("tracks");
 
+                        //Create array of json "tracks"
+                        JSONArray arr = new JSONArray(tracks.getString("items"));
+
+                        //Go through array of tracks and obtain data we want
+                        //TODO: decide what we need to use
+                        searchResults = new ArrayList<TrackNode>();
                         for(int i = 0; i < arr.length(); i++){
-                            JSONObject temp = arr.getJSONObject(i);
-                            System.out.println(temp.getString("name"));
-                            System.out.println(temp.getString("uri"));
-                            addToSearch(temp.getString("name"), temp.getString("uri"));
+                            JSONObject track = arr.getJSONObject(i);
+
+
+                            //Parsing through JSON response to create TrackNode
+
+                            //Track Info
+                            String trackName = track.getString("name");
+                            String trackURI = track.getString("uri");
+                            String duration = track.getString("duration_ms");
+
+                            //Album Info
+                            JSONObject album = track.getJSONObject("album");
+                            String albumName = album.getString("name");
+                            String albumURI = album.getString("uri");
+
+                            //Cover Art Info
+                            JSONArray coverArt = album.optJSONArray("images");
+                            JSONObject coverArtImage = coverArt.getJSONObject(1);
+                            String coverArtURL = coverArtImage.getString("url");
+
+                            //Artist Info
+                            JSONArray artists = track.getJSONArray("artists");
+                            JSONObject artist = artists.getJSONObject(0);
+                            String artistName = artist.getString("name");
+                            String artistURI = artist.getString("uri");
+
+                            //Objects necessary for TrackNode
+                            Artist trackArtist = new Artist(artistName, artistURI);
+                            Album trackAlbum = new Album(albumName, albumURI);
+                            ArrayList<Artist> listOfArtists = new ArrayList<Artist>();
+                            listOfArtists.add(trackArtist);
+                            long trackDuration = Long.parseLong(duration);
+                            ImageUri imageUri = new ImageUri(coverArtURL);
+
+                            TrackNode trackNode = new TrackNode(
+                                    trackArtist,
+                                    listOfArtists,
+                                    trackAlbum,
+                                    trackDuration,
+                                    trackName,
+                                    trackURI,
+                                    imageUri,
+                                    false,
+                                    false
+                            );
+
+
+                            searchResults.add(trackNode);
+
+                            listView.setAdapter(new SearchCustomAdapter(searchResults, getContext()));
 
                         }
 
@@ -105,18 +182,31 @@ public class SearchFragment extends Fragment {
                 },
                 error -> Log.d("ERROR","Broken")
         ) {
+            //Authorization of GET request. Adds OAuth2 code.
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String>  params = new HashMap<String, String>();
 
-                params.put("Authorization", "Bearer BQBbzzk_Qw7Qw4HdPv93-82niuGGz6kuGA0XW4PXYpkt1mpH42X5kMkMXYrgBhxn2YjsY4PtPS-Yeqvs8AOq-0OlJjFu7CEYYjFx_jEZB33EgRbLOGyNHqn9ZYUtUmX8585-I210D1R7p5np2O1DlUSNGzXgPuFIExQ");
+                //TODO: Keep losing authorization, need to fix. Also need to make it specific to user
+                String CLIENT_SECRET = "f484de60c4d445f88ac37e899cb46e65";
+                String tokenURL = "https://accounts.spotify.com/api/token";
+
+
+
+
+
+
+
+                params.put("Authorization", "Bearer BQBwD2FF1WCCZBWtDBuHI-JSnwPB0IIiSQaTqIh8ZeICim2zkaXsY5JjLfwi4Q8-zbk6lKBLGljbvRpOILQSJZGXGyuvZ-zfrdO8wohjvlP9WzFDC5ihw2U3ay8NOlsx_mmmthGqmNW6sLBd2S2KGzc8wBFWLzJMOmk");
 
 
                 return params;
             }
         };
+
         queue.add(getRequest);
 
     }
+
 }
 

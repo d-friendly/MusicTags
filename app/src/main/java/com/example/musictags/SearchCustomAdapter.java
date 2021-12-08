@@ -9,13 +9,15 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 public class SearchCustomAdapter extends BaseAdapter implements ListAdapter {
-    private ArrayList<String> list = new ArrayList<String>();
+    private ArrayList<TrackNode> list;
     private Context context;
 
-    public SearchCustomAdapter(ArrayList<String> list, Context context) {
+    public SearchCustomAdapter(ArrayList<TrackNode> list, Context context) {
         this.list = list;
         this.context = context;
     }
@@ -26,7 +28,7 @@ public class SearchCustomAdapter extends BaseAdapter implements ListAdapter {
     }
 
     @Override
-    public Object getItem(int i) {
+    public TrackNode getItem(int i) {
         return list.get(i);
     }
 
@@ -49,12 +51,17 @@ public class SearchCustomAdapter extends BaseAdapter implements ListAdapter {
         //TODO
         //temporary data to show UI
         coverArt.setImageResource(R.drawable.ic_home);
-        TextView tvSong= (TextView)view.findViewById(R.id.songTitle);
-        tvSong.setText("Song Title");
-        TextView tvArtist= (TextView)view.findViewById(R.id.artist);
-        tvArtist.setText("Artist");
+        TextView tvSong= (TextView) view.findViewById(R.id.songTitle);
+        tvSong.setText(list.get(i).name);
+
+        TextView tvArtist= (TextView) view.findViewById(R.id.artist);
+        tvArtist.setText(list.get(i).artist.name);
 
         //Handle buttons and add onClickListeners
+        Picasso.get().load(list.get(i).imageUri.raw)
+                .resize(150,150)
+                .centerCrop()
+                .into((ImageView) view.findViewById(R.id.coverArt));
         ImageView menuButton= (ImageView)view.findViewById(R.id.ellipsisMenu);
 
         menuButton.setOnClickListener(new View.OnClickListener(){
