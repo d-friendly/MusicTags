@@ -88,13 +88,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 //TODO down vote code
                 break;
             case R.id.playButton:
-                //TODO play button code
+                if(MainActivity.isPaused){
+                    MainActivity.resume();
+                }else{
+                    MainActivity.pause();
+                }
                 break;
             case R.id.lastSongButton:
-                //TODO last song button code
+                MainActivity.skipPrevious();
                 break;
+
             case R.id.nextSongButton:
-                //TODO next song button code
+                MainActivity.skip();
                 break;
             case R.id.pin:
                 displayMyLocation();
