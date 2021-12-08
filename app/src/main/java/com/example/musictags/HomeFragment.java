@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import android.location.Location;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,9 +71,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.fragment_map);
 
-//        mapFragment.getMapAsync(googleMap -> {
-//            displayMyLocation();
-//        });
+        mapFragment.getMapAsync(googleMap -> {
+           // displayMyLocation();
+        });
+
+        //Log.println(Log.ASSERT, "permission", isLocationEnabled());
 
         //returns layout for this fragment
         return homeV;
@@ -88,16 +92,25 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 //TODO down vote code
                 break;
             case R.id.playButton:
-                //TODO play button code
+                if(MainActivity.isPaused){
+                    MainActivity.resume();
+                }else{
+                    MainActivity.pause();
+                }
                 break;
             case R.id.lastSongButton:
-                //TODO last song button code
+                MainActivity.skipPrevious();
                 break;
+
             case R.id.nextSongButton:
-                //TODO next song button code
+                MainActivity.skip();
                 break;
             case R.id.pin:
-                displayMyLocation();
+                //SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+                //        .findFragmentById(R.id.fragment_map);
+                //mapFragment.getMapAsync(googleMap -> {
+                    displayMyLocation();
+                //});
             default:
                 break;
         }
@@ -105,11 +118,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
 
     private void displayMyLocation() {
+        //Log.println(Log.ASSERT, "are we here", "in displayMyLocation()");
         //check if permission is granted
         int permission = ActivityCompat.checkSelfPermission(this.getActivity().getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION);
         //If not, ask for it
         if (permission == PackageManager.PERMISSION_DENIED) {
+            Log.println(Log.ASSERT, "Permission was denied", "denied");
             ActivityCompat.requestPermissions(this.getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
@@ -119,6 +134,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             mFusedLocationProviderClient.getLastLocation()
                     .addOnCompleteListener(this.getActivity(), task -> {
                         Location mLastKnownLocation = task.getResult();
+                        //Log.println(Log.ASSERT, "else statement", mLastKnownLocation.toString());
                         if (task.isSuccessful() && mLastKnownLocation != null) {
 
                             SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.fragment_map);
@@ -126,15 +142,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                                 mMap = googleMap;
 
                                 mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(),
-                                        mLastKnownLocation.getLongitude())).title("Current Location"));
+                                        mLastKnownLocation.getLongitude())).title("Listening Here"));
                                 displayMyLocation();
                             });
                         }
-
                     });
         }
-
-
     }
 
 
@@ -157,5 +170,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         }
 
     }
+
+    // method to check
+    // if location is enabled
+//    private String isLocationEnabled() {
+//        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+//        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+//            return "True";
+//        }
+//        return "False";
+//    }
 
 }
