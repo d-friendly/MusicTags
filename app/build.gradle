@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -39,6 +40,11 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.7'
     implementation 'com.android.volley:volley:1.2.1'
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    //import Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:29.0.1')
+    //dependency for Firebase SDK
+    implementation 'com.google.firebase:firebase-analytics'
 
 
 
