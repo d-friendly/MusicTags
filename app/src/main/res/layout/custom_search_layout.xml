@@ -18,7 +18,8 @@
         android:maxHeight="100dp"
         android:maxWidth="100dp"
         android:contentDescription="TODO"
-        android:layout_weight="3"
+        android:layout_weight="1"
+
         />
 
     <TextView

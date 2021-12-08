@@ -239,10 +239,12 @@ public class MainActivity extends AppCompatActivity {
                         Throwable error = playResult.getError();
                         // try to have some fun with the error
                         Log.i("play","fail") ;
+
                     }
+                }else{
+                    Log.i("play", "mSpotifyAppRemote is null");
                 }
             }
-
         }.start();
         return true;
     }

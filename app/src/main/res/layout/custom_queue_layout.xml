@@ -7,33 +7,49 @@
     android:orientation="horizontal"
     android:weightSum="7">
 
+
     <ImageView
         android:id="@+id/coverArt"
-        android:layout_width="100px"
-        android:layout_height="100px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="100dp"
+        android:minWidth="100dp"
+        android:maxHeight="100dp"
+        android:maxWidth="100dp"
         android:contentDescription="TODO"
-        android:layout_weight="3"
+        android:layout_weight="1"
+
         />
 
     <TextView
         android:id="@+id/songTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@color/white"
+        android:maxLines="2"
+        android:maxLength="20"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:text="SongTitle"
         android:layout_weight="2"
         />
 
     <TextView
         android:id="@+id/artist"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="right"
         android:textSize="18sp"
         android:textColor="@color/white"
         android:text="Artist"
+        android:maxLines="2"
+        android:maxLength="20"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="10dp"
         android:layout_weight="2"
+        android:layout_alignParentRight="true"
         />
 
 
@@ -43,7 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_upvote"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="7dp"
 
         />
     <ImageView

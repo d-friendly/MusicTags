@@ -34,6 +34,7 @@ public class QueueFragment extends Fragment {
     public ArrayList<TrackNode> tracks;
     public TrackNode tn;
     private ArrayList<String> data;
+//    public static ArrayList<TrackNode> trackList = SearchFragment.searchResults;
     public QueueFragment() {
         // Required empty public constructor
     }
@@ -66,7 +67,7 @@ public class QueueFragment extends Fragment {
         long duration = 239000;
         String name = "D Smoke";
         String uri = "spotify:track:1icmxr6OxT03H4dHGOiLFX";
-        ImageUri iURI = new ImageUri("String");
+        ImageUri iURI = new ImageUri("https://images.complex.com/complex/images/c_fill,dpr_auto,f_auto,q_auto,w_1400/fl_lossy,pg_1/hcjrqlvc6dfhpjxob9nt/cudi?fimg-ssr-default");
         boolean isEpisode = false;
         boolean isPodcast = false;
         Track track = new Track(artist,artists,album,duration,name,uri,iURI,isEpisode,isPodcast);
@@ -81,41 +82,14 @@ public class QueueFragment extends Fragment {
         });
 
 
-
-//        CallResult<Capabilities> capabilitiesCallResult= MainActivity.getUserApi().getCapabilities();
-//        Result<Capabilities> capabilitiesResult = capabilitiesCallResult.await(5,TimeUnit.SECONDS);
-//        if(capabilitiesResult.isSuccessful()) {
-//            UserApi uAPI = (UserApi) capabilitiesResult.getData();
-//            Log.i("interested","got userapi");
-//        }else{
-//            Log.i("interested","diddddnt get userapi");
-//        }
-
-
-
-//        if(MainActivity.getPlayerApi().getPlayerState().await(10, TimeUnit.SECONDS).getData().track==null){
-//            //Track track = new Track()
-//        }else{
-//            Track track = MainActivity.getPlayerApi().getPlayerState().await(10, TimeUnit.SECONDS).getData().track;
-//        }
-
-
-//        TrackNode tn = new TrackNode(track);
-//        tracks = new ArrayList<TrackNode>();
-//        tracks.add(tn);
-////        data = new ArrayList<String>(Arrays.asList("111,222,333,444,555,666,dfdfd,dfsdfdsf,dfsdfsdf,dfdfsdga,fdfafds,dsfdsfs,dfsdfs,dfs,df,sdf,sd,dfdf,sdf,sdf,d,fd,fd,f,d,fd,f,df,df".split(",")));
-//        listView.setAdapter(new QueueCustomAdapter(tracks, getContext()));
+        tracks = new ArrayList<TrackNode>();
+        tracks.add(tn);
+//        data = new ArrayList<String>(Arrays.asList("111,222,333,444,555,666,dfdfd,dfsdfdsf,dfsdfsdf,dfdfsdga,fdfafds,dsfdsfs,dfsdfs,dfs,df,sdf,sd,dfdf,sdf,sdf,d,fd,fd,f,d,fd,f,df,df".split(",")));
+        listView.setAdapter(new QueueCustomAdapter(tracks, getContext()));
+//        listView.setAdapter(new QueueCustomAdapter(trackList, getContext()));
         // Inflate the layout for this fragment
         return v;
     }
-
-
-
-
-
-
-
-
 }
 
 

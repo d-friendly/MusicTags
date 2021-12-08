@@ -5,22 +5,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class QueueCustomAdapter extends ArrayAdapter<TrackNode> implements ListAdapter {
-    private Queue<TrackNode> tracks = new LinkedList<TrackNode>();
+public class QueueCustomAdapter extends BaseAdapter implements ListAdapter {
+    private ArrayList<TrackNode> tracks = new ArrayList<TrackNode>();
     private Context context;
 
 
     public QueueCustomAdapter(ArrayList<TrackNode> tracks, Context context) {
-        super(context,0,tracks);
+
+        this.tracks=tracks;
+        this.context=context;
     }
 
 
@@ -33,7 +38,7 @@ public class QueueCustomAdapter extends ArrayAdapter<TrackNode> implements ListA
     @Override
     public TrackNode getItem(int pos) {
 
-        return tracks.peek();
+        return tracks.get(pos);
     }
 
     @Override
@@ -51,18 +56,30 @@ public class QueueCustomAdapter extends ArrayAdapter<TrackNode> implements ListA
             view = inflater.inflate(R.layout.custom_queue_layout, null);
         }
 
+
         //Handle TextView and display string from your list
-        LinearLayout queueItem = (LinearLayout) view.findViewById((R.id.queueItem));
-
-
         ImageView coverArt = (ImageView) view.findViewById(R.id.coverArt);
         //TODO
         //temporary data to show UI
         coverArt.setImageResource(R.drawable.ic_home);
-        TextView tvSong= (TextView)view.findViewById(R.id.songTitle);
-        tvSong.setText("Song Title");
-        TextView tvArtist= (TextView)view.findViewById(R.id.artist);
-        tvArtist.setText("Artist");
+        TextView tvSong= (TextView) view.findViewById(R.id.songTitle);
+        tvSong.setText(tracks.get(position).name);
+
+        TextView tvArtist= (TextView) view.findViewById(R.id.artist);
+        tvArtist.setText(tracks.get(position).artist.name);
+        //Handle buttons and add onClickListeners
+        Picasso.get().load(tracks.get(position).imageUri.raw)
+                .resize(150,150)
+                .centerCrop()
+                .into((ImageView) view.findViewById(R.id.coverArt));
+
+//        Picasso.get().load(tracks.get(position).imageUri.raw)
+//                .fit()
+//                .centerCrop()
+//                .into((ImageView) view.findViewById(R.id.coverArt));
+
+        //Handle TextView and display string from your list
+        LinearLayout queueItem = (LinearLayout) view.findViewById((R.id.queueItem));
 
         //Handle buttons and add onClickListeners
         ImageView upvotebtn= (ImageView)view.findViewById(R.id.upvote);
