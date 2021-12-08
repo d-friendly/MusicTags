@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "252619262712",
+    "project_id": "musictags",
+    "storage_bucket": "musictags.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:252619262712:android:87cdbe0a0ef38e3084490d",
+        "android_client_info": {
+          "package_name": "com.example.musictags"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "252619262712-chmcr6372rj76lcf8f1feptcbqghkcrc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBo-Ec5yGA5WYddr7y9Lu5dei0z8HXrP9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "252619262712-chmcr6372rj76lcf8f1feptcbqghkcrc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
