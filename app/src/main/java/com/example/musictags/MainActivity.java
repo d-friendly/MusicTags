@@ -30,7 +30,10 @@ import com.spotify.android.appremote.api.UserApi;
 import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.client.Result;
 import com.spotify.protocol.client.Subscription;
+import com.spotify.protocol.types.Album;
+import com.spotify.protocol.types.Artist;
 import com.spotify.protocol.types.Empty;
+import com.spotify.protocol.types.ImageUri;
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
 
@@ -44,6 +47,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationBarView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -61,10 +65,6 @@ public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient mFusedLocationProviderClient; //Save the instance
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7;
     public static boolean playFromAppQueue=false;
-    //CHECK WITH DYLAN ON LOCATION OF CONNECTION IN MAIN VS HOMEFRAG
-
-    //TODO put database operations on new thread
-    public static final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
     @Override
@@ -90,21 +90,29 @@ public class MainActivity extends AppCompatActivity {
                         mSpotifyAppRemote = spotifyAppRemote;
                         Log.i("MainActivity", "Connected! Yay!");
 
-                        //PlayerState subscription. will execute anytime playerstate is updated
-                        //includes track start/stop, reverse/skip, playback bar
+                        // Now you can start interacting with App Remote
+                        //connected();
                         mSpotifyAppRemote.getPlayerApi()
                                 .subscribeToPlayerState()
                                 .setEventCallback(playerState -> {
                                     final Track track = playerState.track;
                                     isPaused = playerState.isPaused ;
+                                    if(playerState.playbackPosition == playerState.track.duration - 1000 && playFromAppQueue){
+
+                                        //other option TODO delete playFromAppQueue
+
+                                        //play song from uri and quickly stop it(or dont stop it and have it be the correct first song of queue
+                                        //then add all songs to queue
+                                        //      vhange if statement this is option we choose
 
 
-
-                                    if(playerState.playbackPosition == playerState.track.duration - 1 && playFromAppQueue){
                                         //TODO handling end up song queuing
                                         //get next tracknode from queue
+                                        //TrackNode nextSong = ....
+
                                         //get updated arraylist representative of queue (might be redudent step)
                                         //play next tracknode
+                                        //play(nextSong);
                                         //notify adpater that data has changed to update listview
                                         //           if this doesnt work we should try reattaching to customadapter(dont like this option, work around at best)
                                         //myAdapter.mySetNewContentMethod(someNewContent);
@@ -119,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                                         // all on spotify api or in examples
                                         //return track;
                                     } else {
-                                        Log.d("MainActivity", "fail1");
+                                        Log.d("MainActivity", "track was null");
                                     }
                                 });
                     }
@@ -355,6 +363,4 @@ public class MainActivity extends AppCompatActivity {
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
 
     }
-
-
 }
