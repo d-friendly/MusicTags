@@ -105,9 +105,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.upVoteButton:
                 //TODO up vote code
+                updateVote();
                 break;
             case R.id.downVoteButton:
                 //TODO down vote code
+                DBTrackNode dbTN;
+                //get current DBTrackNode
+                //updateVote(dbTN);
                 break;
             case R.id.playButton:
 
@@ -126,7 +130,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                 break;
             case R.id.pin:
-                sendData("Test");
+                sendTag("Test");
                 //SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 //        .findFragmentById(R.id.fragment_map);
                 //mapFragment.getMapAsync(googleMap -> {
@@ -213,10 +217,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
 
     //sends DBTrackNodes to cloud firestore
-    public void sendData(String msg) {
+    public void sendTag(String msg) {
 
-    //need someway to update tagged tracks with new up and down votes...
-        // are votes per tag or per song?
+    //updates Tags vote count
+
 
         //if per tag
             // DocumentReference name_of_reference = db.collection("tags").document("doc name");
@@ -236,7 +240,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         boolean isPodcast = false;
         Track track = new Track(artist,artists,album,duration,name,uri,iURI,isEpisode,isPodcast);
         TrackNode tn = new TrackNode(track);
-        DBTrackNode dbTN = new DBTrackNode(tn,49.0,30.4,0,0);
+        DBTrackNode dbTN = new DBTrackNode(tn,49.0,30.4,0,0,"");
 
 
 
@@ -248,6 +252,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                        Log.println(Log.ASSERT, "Sending Doc", "DocumentSnapshot added with ID: " + documentReference.getId());
+                       dbTN.docID = documentReference.getId();
+                       updateTag(dbTN);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -256,6 +262,31 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         Log.println(Log.ASSERT, "Sending Doc Failed", "Error adding document" );
                     }
                 });
+    }
+
+    public void updateTag(DBTrackNode node){
+        String ref = node.getdocID();
+        DocumentReference toUpdate = MainActivity.db.collection("Tags").document(ref);
+        toUpdate.update("docID", ref)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.println(Log.ASSERT, "Update Success", "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.println(Log.ASSERT, "Update failed", "Error updating document");
+                    }
+                });
+
+
+    }
+
+    private void updateVote() {
+        //get DBTrackNode playing
+
     }
 
 

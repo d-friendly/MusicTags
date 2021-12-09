@@ -14,6 +14,7 @@ public class DBTrackNode extends TrackNode {
     public int downvote;
     public double longitude;
     public double latitude;
+    public String docID;
 
     //TODO Firebase needs empty public constructor per
     // https://firebase.google.com/docs/firestore/manage-data/add-data
@@ -27,37 +28,43 @@ public class DBTrackNode extends TrackNode {
     @ServerTimestamp
     public Date date;
 
-    public DBTrackNode(Artist artist, List<Artist> artists, Album album, long duration, String name, String uri, ImageUri imageUri, boolean isEpisode, boolean isPodcast, double longitude, double latitude, int upvote, int downvote) {
+    public DBTrackNode(Artist artist, List<Artist> artists, Album album, long duration, String name, String uri, ImageUri imageUri, boolean isEpisode, boolean isPodcast, double longitude, double latitude, int upvote, int downvote, String docID) {
         super(artist, artists, album, duration, name, uri, imageUri, isEpisode, isPodcast);
         this.upvote=upvote;
         this.downvote=downvote;
         this.longitude=longitude;
         this.latitude=latitude;
+        this.docID = docID;
     }
 
-    public DBTrackNode(TrackNode tn, double longitude, double latitude, int upvote, int downvote){
+    public DBTrackNode(TrackNode tn, double longitude, double latitude, int upvote, int downvote, String docID){
         super(tn);
         this.upvote=upvote;
         this.downvote=downvote;
         this.longitude=longitude;
         this.latitude=latitude;
+        this.docID = docID;
     }
 
 
-    public int getUpVote(){
+    public int getupvote(){
         return upvote;
     }
 
-    public int getDownVote(){
+    public int getdownvote(){
         return downvote;
     }
 
-    public double getLongitudee(){
+    public double getlongitude(){
         return longitude;
     }
 
-    public double getLatitude(){
+    public double getlatitude(){
         return latitude;
+    }
+
+    public String getdocID(){
+        return docID;
     }
 
 }
