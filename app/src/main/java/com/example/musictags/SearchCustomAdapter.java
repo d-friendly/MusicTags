@@ -98,7 +98,9 @@ public class SearchCustomAdapter extends BaseAdapter implements ListAdapter {
                                 break;
                             case "Pin Song":
                                 Toast.makeText(view.getContext(), "You Clicked pin", Toast.LENGTH_SHORT).show();
-                                //TODO: assign TrackNode to current coordinates
+                                //Call pin method from Home(maps)Fragment
+                                HomeFragment.sendTag(MainActivity.attachNodeToLocation(list.get(i)));
+
                                 break;
                             default:
                                 Toast.makeText(view.getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();

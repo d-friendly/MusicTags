@@ -3,6 +3,7 @@ package com.example.musictags;
 import android.media.MediaParser;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
@@ -19,6 +20,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.spotify.android.appremote.api.UserApi;
 import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.client.Result;
@@ -31,7 +36,7 @@ import com.spotify.protocol.types.Track;
 
 public class QueueFragment extends Fragment {
 
-    public ArrayList<TrackNode> tracks;
+    public ArrayList<DBTrackNode> tracks;
     public TrackNode tn;
     private ArrayList<String> data;
 
@@ -50,6 +55,7 @@ public class QueueFragment extends Fragment {
         //PLACEHOLDER DATA
         //TODO gets an arraylist of tracks from another 'backend'?
         //tracks =
+        tracks=getQueue();
 
         //TODO this is giving me errors but spotify will connect with it commented out
 //        if(MainActivity.getPlayerState()==null){
@@ -86,9 +92,9 @@ public class QueueFragment extends Fragment {
 
 
 
-
-        tracks = new ArrayList<TrackNode>();
-        tracks.add(tn);
+//TODO delete this
+//        tracks = new ArrayList<DBTrackNode>();
+//        tracks.add(tn);
         //Get Queue
 
 
@@ -102,17 +108,45 @@ public class QueueFragment extends Fragment {
 
 
 
+    /*
+        retrieves queue from FireStore
+
+     */
     private ArrayList<DBTrackNode> getQueue(){
         ArrayList<DBTrackNode> queue = new ArrayList<>();
         new Thread() {
 
             @Override
             public void run() {
+                //get current locatin
+                double longi= -89.40059803284569;
+                double lati= 43.07513050785626;
                 //todo
                 //pull (up to) 15 closest Track nodes from firestore ordered by location
                 //add to queue variable
-
+                MainActivity.db.collection("tags")
+                        .whereLessThanOrEqualTo("longitude",longi +.0045)
+                        .whereGreaterThanOrEqualTo("longitude", longi - .0045)
+                        .whereLessThanOrEqualTo("latitude", lati + .0045)
+                        .whereGreaterThanOrEqualTo("latitude", lati - .005)
+                        .orderBy("latitude")
+                        .orderBy("longitude")
+                        .limit(15)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        Log.d("database", document.getId() + " => " + document.getData());
+                                    }
+                                } else {
+                                    Log.d("database", "Error getting documents: ", task.getException());
+                                }
+                            }
+                        });
             }
+
 
         }.start();
         return queue;

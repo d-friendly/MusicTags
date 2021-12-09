@@ -65,15 +65,17 @@ public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient mFusedLocationProviderClient; //Save the instance
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7;
     public static boolean playFromAppQueue=false;
+    private static TrackNode currentTrack;
 
     public static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        currentTrack=null;
 
         // Set the connection parameters
         ConnectionParams connectionParams =
@@ -98,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
                                 .subscribeToPlayerState()
                                 .setEventCallback(playerState -> {
                                     final Track track = playerState.track;
+
                                     isPaused = playerState.isPaused ;
                                     if(playerState.playbackPosition == playerState.track.duration - 1000 && playFromAppQueue){
 
@@ -105,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
                                         //play song from uri and quickly stop it(or dont stop it and have it be the correct first song of queue
                                         //then add all songs to queue
-                                        //      vhange if statement this is option we choose
+                                        //Change if statement this is option we choose
 
 
                                         //TODO handling end up song queuing
@@ -123,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     if (track != null) {
                                         Log.d("MainActivity", track.name + " by " + track.artist.name);
+                                        currentTrack = new TrackNode(track);
                                         //TODO Josh
                                         // put track.artist.name or track.name/ track.ablum etc
                                         // into fragment_home.xml (probably send info to HomeFragment.java)
@@ -130,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
                                         //return track;
                                     } else {
                                         Log.d("MainActivity", "track was null");
+                                        currentTrack=null;
                                     }
                                 });
                     }
@@ -307,14 +312,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*
-        Gets PlayerState
+        Gets current song
         Parameters:
-        Return PlayerApi. null if fails
+        Return current song. null if no song playing or fails
         NOT CURRENTLY BEING CALLEDD TODO
      */
-    public static void getPlayerState() {
-        // Subscribe to PlayerState
-
+    public static TrackNode getCurrentSong() {
+        if(currentTrack!=null){
+            return currentTrack;
+        }else{
+            return null;
+        }
     }
 
 
@@ -331,6 +339,22 @@ public class MainActivity extends AppCompatActivity {
         }.start();
     }
 
+
+    /*
+     Creates a DBnode by getting current location. Called when pinning a song to cconvert nodes
+     */
+    public static DBTrackNode attachNodeToLocation(TrackNode tn){
+        //TODO josh once he can longi and lati this where we will call that method.
+
+        double longi = Math.random()* -89.40059803284569; //temp
+        double lati = Math.random()* 43.07513050785626; //tem[
+        int upvote = 0;
+        int downvote = 0;
+        DBTrackNode dbTN = new DBTrackNode(tn,longi,lati,upvote,downvote,"");
+
+        return dbTN;
+
+    }
 
 
     private NavigationBarView.OnItemSelectedListener bottomnavFunction = new NavigationBarView.OnItemSelectedListener() {

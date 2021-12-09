@@ -130,7 +130,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                 break;
             case R.id.pin:
-                sendTag("Test");
+                TrackNode tn = MainActivity.getCurrentSong();
+                DBTrackNode nodeToPin = MainActivity.attachNodeToLocation(tn);
+                sendTag(nodeToPin);
+                //DBTrackNode current = DBTracknode of song playing
+                //then send tag sendTag(current)
                 //SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 //        .findFragmentById(R.id.fragment_map);
                 //mapFragment.getMapAsync(googleMap -> {
@@ -142,6 +146,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 break;
         }
     }
+
 
 
 
@@ -217,7 +222,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
 
     //sends DBTrackNodes to cloud firestore
-    public void sendTag(String msg) {
+    public static void sendTag(DBTrackNode dbTrackNode) {
 
     //updates Tags vote count
 
@@ -228,32 +233,32 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             //.addOnSucess
 
 
-        Artist artist = new Artist("D Smoke", "spotify:track:1icmxr6OxT03H4dHGOiLFX");
-        List<Artist> artists = new ArrayList<Artist>();
-        artists.add(artist);
-        Album album = new Album("D Smoke", "spotify:track:1icmxr6OxT03H4dHGOiLFX");
-        long duration = 239000;
-        String name = "D Smoke";
-        String uri = "spotify:track:1icmxr6OxT03H4dHGOiLFX";
-        ImageUri iURI = new ImageUri("https://images.complex.com/complex/images/c_fill,dpr_auto,f_auto,q_auto,w_1400/fl_lossy,pg_1/hcjrqlvc6dfhpjxob9nt/cudi?fimg-ssr-default");
-        boolean isEpisode = false;
-        boolean isPodcast = false;
-        Track track = new Track(artist,artists,album,duration,name,uri,iURI,isEpisode,isPodcast);
-        TrackNode tn = new TrackNode(track);
-        DBTrackNode dbTN = new DBTrackNode(tn,49.0,30.4,0,0,"");
+//        Artist artist = new Artist("D Smoke", "spotify:track:1icmxr6OxT03H4dHGOiLFX");
+//        List<Artist> artists = new ArrayList<Artist>();
+//        artists.add(artist);
+//        Album album = new Album("D Smoke", "spotify:track:1icmxr6OxT03H4dHGOiLFX");
+//        long duration = 239000;
+//        String name = "D Smoke";
+//        String uri = "spotify:track:1icmxr6OxT03H4dHGOiLFX";
+//        ImageUri iURI = new ImageUri("https://images.complex.com/complex/images/c_fill,dpr_auto,f_auto,q_auto,w_1400/fl_lossy,pg_1/hcjrqlvc6dfhpjxob9nt/cudi?fimg-ssr-default");
+//        boolean isEpisode = false;
+//        boolean isPodcast = false;
+//        Track track = new Track(artist,artists,album,duration,name,uri,iURI,isEpisode,isPodcast);
+//        TrackNode tn = new TrackNode(track);
+//        DBTrackNode dbTN = new DBTrackNode(tn,49.0,30.4,0,0,"");
 
 
 
 
         //Adds DBTrackNode to Firestore (adapted from https://firebase.google.com/docs/firestore/quickstart)
         MainActivity.db.collection("Tags")
-                .add(dbTN)
+                .add(dbTrackNode)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                        Log.println(Log.ASSERT, "Sending Doc", "DocumentSnapshot added with ID: " + documentReference.getId());
-                       dbTN.docID = documentReference.getId();
-                       updateTag(dbTN);
+                       dbTrackNode.docID = documentReference.getId();
+                       updateTag(dbTrackNode);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -264,7 +269,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 });
     }
 
-    public void updateTag(DBTrackNode node){
+    public static void updateTag(DBTrackNode node){
         String ref = node.getdocID();
         DocumentReference toUpdate = MainActivity.db.collection("Tags").document(ref);
         toUpdate.update("docID", ref)

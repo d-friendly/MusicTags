@@ -20,11 +20,11 @@ import java.util.Queue;
 
 
 public class QueueCustomAdapter extends BaseAdapter implements ListAdapter {
-    private ArrayList<TrackNode> tracks = new ArrayList<TrackNode>();
+    private ArrayList<DBTrackNode> tracks = new ArrayList<DBTrackNode>();
     private Context context;
 
 
-    public QueueCustomAdapter(ArrayList<TrackNode> tracks, Context context) {
+    public QueueCustomAdapter(ArrayList<DBTrackNode> tracks, Context context) {
         this.tracks=tracks;
         this.context=context;
     }
