@@ -66,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7;
     public static boolean playFromAppQueue=false;
 
+    public static FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

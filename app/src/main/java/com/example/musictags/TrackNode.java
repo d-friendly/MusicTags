@@ -7,6 +7,7 @@ import com.spotify.protocol.types.Track;
 
 import java.util.List;
 
+
 public class TrackNode extends Track {
     //need name, uri, artist, duration in milliseconds, imageUri, album
     //isEpisode and isPodcast always false

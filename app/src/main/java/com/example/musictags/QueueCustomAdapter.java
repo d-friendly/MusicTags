@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
+
+
 public class QueueCustomAdapter extends BaseAdapter implements ListAdapter {
     private ArrayList<TrackNode> tracks = new ArrayList<TrackNode>();
     private Context context;

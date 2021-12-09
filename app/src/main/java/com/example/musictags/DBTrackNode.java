@@ -21,6 +21,7 @@ public class DBTrackNode extends TrackNode {
 //        super();
 //    }
 
+
     //TODO add date field to DBTrackNode
     // so that server can update it when sent to cloud firestore (if we want to)
     @ServerTimestamp

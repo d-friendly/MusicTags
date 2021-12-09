@@ -100,6 +100,8 @@ public class QueueFragment extends Fragment {
         return v;
     }
 
+
+
     private ArrayList<DBTrackNode> getQueue(){
         ArrayList<DBTrackNode> queue = new ArrayList<>();
         new Thread() {

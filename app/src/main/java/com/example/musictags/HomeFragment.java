@@ -239,6 +239,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         DBTrackNode dbTN = new DBTrackNode(tn,49.0,30.4,0,0);
 
 
+
+
         //Adds DBTrackNode to Firestore (adapted from https://firebase.google.com/docs/firestore/quickstart)
         MainActivity.db.collection("Tags")
                 .add(dbTN)
