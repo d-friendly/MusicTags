@@ -29,7 +29,19 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.spotify.protocol.types.Album;
+import com.spotify.protocol.types.Artist;
+import com.spotify.protocol.types.ImageUri;
+import com.spotify.protocol.types.Track;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 
 
@@ -44,6 +56,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private static GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient; //Save the instance
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7;
+
+    //CHECK WITH DYLAN ABOUT THIS HERE VS MAIN
+    //FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
     @Override
@@ -77,9 +92,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         //Log.println(Log.ASSERT, "permission", isLocationEnabled());
 
+
+
         //returns layout for this fragment
         return homeV;
     }
+
 
 
     @Override
@@ -106,11 +124,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 MainActivity.skip();
                 break;
             case R.id.pin:
+                sendData("Test");
                 //SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 //        .findFragmentById(R.id.fragment_map);
                 //mapFragment.getMapAsync(googleMap -> {
+                //todo put all map api stuff on own thread
                     displayMyLocation();
                 //});
+
             default:
                 break;
         }
@@ -185,5 +206,54 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 //        }
 //        return "False";
 //    }
+
+
+
+
+    //sends DBTrackNodes to cloud firestore
+    public void sendData(String msg) {
+
+    //need someway to update tagged tracks with new up and down votes...
+        // are votes per tag or per song?
+
+        //if per tag
+            // DocumentReference name_of_reference = db.collection("tags").document("doc name");
+            //name_of_reference.update("upvote", true)
+            //.addOnSucess
+
+
+        Artist artist = new Artist("D Smoke", "spotify:track:1icmxr6OxT03H4dHGOiLFX");
+        List<Artist> artists = new ArrayList<Artist>();
+        artists.add(artist);
+        Album album = new Album("D Smoke", "spotify:track:1icmxr6OxT03H4dHGOiLFX");
+        long duration = 239000;
+        String name = "D Smoke";
+        String uri = "spotify:track:1icmxr6OxT03H4dHGOiLFX";
+        ImageUri iURI = new ImageUri("https://images.complex.com/complex/images/c_fill,dpr_auto,f_auto,q_auto,w_1400/fl_lossy,pg_1/hcjrqlvc6dfhpjxob9nt/cudi?fimg-ssr-default");
+        boolean isEpisode = false;
+        boolean isPodcast = false;
+        Track track = new Track(artist,artists,album,duration,name,uri,iURI,isEpisode,isPodcast);
+        TrackNode tn = new TrackNode(track);
+        DBTrackNode dbTN = new DBTrackNode(tn,49.0,30.4,0,0);
+
+
+        //Adds DBTrackNode to Firestore (adapted from https://firebase.google.com/docs/firestore/quickstart)
+        MainActivity.db.collection("Tags")
+                .add(dbTN)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                       Log.println(Log.ASSERT, "Sending Doc", "DocumentSnapshot added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.println(Log.ASSERT, "Sending Doc Failed", "Error adding document" );
+                    }
+                });
+    }
+
+
 
 }

@@ -76,6 +76,7 @@ public class QueueFragment extends Fragment {
             //TODO ALGO potential
             @Override
             public void onClick(View v) {
+                //calls method that does the below
                 //query firebase for songs based on parameters
                 //  if firebase allows us to sort said info
                 //      call algorithm for creating queue / might not need a algo just convert to arraylist
@@ -83,6 +84,8 @@ public class QueueFragment extends Fragment {
                 //
             }
         });
+
+
 
 
         tracks = new ArrayList<TrackNode>();
@@ -97,10 +100,24 @@ public class QueueFragment extends Fragment {
         // Inflate the layout for this fragment
         return v;
     }
-//
-//    public ArrayList<TrackNode> getQueue(){
-//
-//    }
+
+    private ArrayList<DBTrackNode> getQueue(){
+        ArrayList<DBTrackNode> queue = new ArrayList<>();
+        new Thread() {
+
+            @Override
+            public void run() {
+                //todo
+                //pull (up to) 15 closest Track nodes from firestore ordered by location
+                //add to queue variable
+
+            }
+
+        }.start();
+        return queue;
+    }
+
+
 }
 
 

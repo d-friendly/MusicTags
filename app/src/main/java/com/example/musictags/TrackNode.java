@@ -11,6 +11,12 @@ public class TrackNode extends Track {
     //need name, uri, artist, duration in milliseconds, imageUri, album
     //isEpisode and isPodcast always false
 
+    //TODO still per https://firebase.google.com/docs/firestore/manage-data/add-data
+    // need an empty public constructor
+//    public TrackNode() {
+//        super();
+//    }
+
     //add any relevant information
 //
     public TrackNode(Artist artist, List<Artist> artists, Album album, long duration, String name, String uri, ImageUri imageUri, boolean isEpisode, boolean isPodcast) {

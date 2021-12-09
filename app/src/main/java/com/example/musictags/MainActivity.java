@@ -19,6 +19,8 @@ import android.os.Bundle;
 import android.telecom.Call;
 import android.util.Log;
 import android.view.MenuItem;
+
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.PlayerApi;
@@ -59,6 +61,10 @@ public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient mFusedLocationProviderClient; //Save the instance
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7;
     public static boolean playFromAppQueue=false;
+    //CHECK WITH DYLAN ON LOCATION OF CONNECTION IN MAIN VS HOMEFRAG
+
+    //TODO put database operations on new thread
+    public static final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
     @Override
@@ -84,13 +90,15 @@ public class MainActivity extends AppCompatActivity {
                         mSpotifyAppRemote = spotifyAppRemote;
                         Log.i("MainActivity", "Connected! Yay!");
 
-                        // Now you can start interacting with App Remote
-                        //connected();
+                        //PlayerState subscription. will execute anytime playerstate is updated
+                        //includes track start/stop, reverse/skip, playback bar
                         mSpotifyAppRemote.getPlayerApi()
                                 .subscribeToPlayerState()
                                 .setEventCallback(playerState -> {
                                     final Track track = playerState.track;
                                     isPaused = playerState.isPaused ;
+
+
 
                                     if(playerState.playbackPosition == playerState.track.duration - 1 && playFromAppQueue){
                                         //TODO handling end up song queuing
@@ -101,9 +109,14 @@ public class MainActivity extends AppCompatActivity {
                                         //           if this doesnt work we should try reattaching to customadapter(dont like this option, work around at best)
                                         //myAdapter.mySetNewContentMethod(someNewContent);
                                         //myAdapter.notifyDataSetChanged();
+
                                     }
                                     if (track != null) {
                                         Log.d("MainActivity", track.name + " by " + track.artist.name);
+                                        //TODO Josh
+                                        // put track.artist.name or track.name/ track.ablum etc
+                                        // into fragment_home.xml (probably send info to HomeFragment.java)
+                                        // all on spotify api or in examples
                                         //return track;
                                     } else {
                                         Log.d("MainActivity", "fail1");
@@ -342,4 +355,6 @@ public class MainActivity extends AppCompatActivity {
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
 
     }
+
+
 }

@@ -42,9 +42,9 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
 
     //import Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:29.0.1')
+    implementation platform('com.google.firebase:firebase-bom:29.0.0')
     //dependency for Firebase SDK
-    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-firestore'
 
 
 
