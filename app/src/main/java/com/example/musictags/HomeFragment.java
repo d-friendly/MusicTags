@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -78,6 +80,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         play.setOnClickListener(this);
         ImageButton pin = (ImageButton) homeV.findViewById(R.id.pin);
         pin.setOnClickListener(this);
+
+        if (MainActivity.currentTrack != null){
+            ImageView trackImage = (ImageView) homeV.findViewById(R.id.trackImage);
+            trackImage.setImageURI(Uri.parse((MainActivity.currentTrack.imageUri).toString()));
+        }
 
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.getActivity());

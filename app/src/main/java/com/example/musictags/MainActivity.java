@@ -35,6 +35,7 @@ import com.spotify.protocol.types.Album;
 import com.spotify.protocol.types.Artist;
 import com.spotify.protocol.types.Empty;
 import com.spotify.protocol.types.ImageUri;
+import com.spotify.protocol.types.PlaybackPosition;
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
 
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient mFusedLocationProviderClient; //Save the instance
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7;
     public static boolean playFromAppQueue=false;
-    private static TrackNode currentTrack;
+    public static TrackNode currentTrack;
 
     public static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -131,9 +132,11 @@ public class MainActivity extends AppCompatActivity {
                                         //myAdapter.notifyDataSetChanged();
 
                                     }
+
                                     if (track != null) {
                                         Log.d("MainActivity", track.name + " by " + track.artist.name);
                                         currentTrack = new TrackNode(track);
+                                        //PlaybackPosition pp = playerStat;
                                         //TODO Josh
                                         // put track.artist.name or track.name/ track.ablum etc
                                         // into fragment_home.xml (probably send info to HomeFragment.java)
