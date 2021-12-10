@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.telecom.Call;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.spotify.android.appremote.api.ConnectionParams;
@@ -54,6 +55,15 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private NavigationBarView bottomNavigationView;
+
+    /*
+    JOSHES
+     */
+    LocationManager locationManager;
+    LocationListener locationListener;
+    /*
+    JOSHES END
+     */
 
     public static boolean isPaused;
     private static final String CLIENT_ID = "10ee2098620d4a0b8fde685d19d8a0ab";
@@ -149,6 +159,46 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomnav);
         bottomNavigationView.setOnItemSelectedListener(bottomnavFunction);
         getSupportFragmentManager().beginTransaction().replace(R.id.container, new HomeFragment()).commit();
+        /*
+        JOSHES
+         */
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                updateLocationInfo(location);
+            }
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle){
+
+            }
+            @Override
+            public void onProviderEnabled(String s){
+
+            }
+            @Override
+            public void onProviderDisabled(String s){
+
+            }
+        };
+
+        if (Build.VERSION.SDK_INT < 23) {
+            startListening();
+        } else {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            } else{
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location != null) {
+                    updateLocationInfo(location);
+                }
+            }
+        }
+        /*
+        JOSHES END
+         */
     }
 
     /*
@@ -158,7 +208,6 @@ public class MainActivity extends AppCompatActivity {
         new Thread() {
             @Override
             public void run() {
-
 
                 if(mSpotifyAppRemote!=null) {
                     CallResult<Empty> pauseCall = mSpotifyAppRemote.getPlayerApi().pause();
@@ -389,4 +438,44 @@ public class MainActivity extends AppCompatActivity {
         SpotifyAppRemote.disconnect(mSpotifyAppRemote);
 
     }
+
+
+
+    /*
+    JOSHES
+     */
+    public void startListening() {
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if ((grantResults.length >= 0) && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            startListening();
+        }
+    }
+
+    public void updateLocationInfo(Location location) {
+        Log.i("LocationInfo", location.toString());
+
+        //TextView latitude = (TextView) findViewById(R.id.latitude);
+        //TextView longitude = (TextView) findViewById(R.id.longitude);
+        //TextView altitude = (TextView) findViewById(R.id.altitude);
+        //TextView accuracy = (TextView) findViewById(R.id.accuracy);
+
+        //latitude.setText("Latitude: " + location.getLatitude());
+        //longitude.setText("Longitude: " + location.getLongitude());
+        //altitude.setText("Altitude: " + location.getAltitude());
+        //accuracy.setText("Accuracy: " + location.getAccuracy());
+
+
+    }
+    /*
+    JOSHES END
+     */
+
 }
