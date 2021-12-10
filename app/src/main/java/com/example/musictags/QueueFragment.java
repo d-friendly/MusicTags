@@ -124,7 +124,11 @@ public class QueueFragment extends Fragment {
                 //todo
                 //pull (up to) 15 closest Track nodes from firestore ordered by location
                 //add to queue variable
-                MainActivity.db.collection("tags")
+
+
+               /*
+
+               MainActivity.db.collection("tags")
                         .whereLessThanOrEqualTo("longitude",longi +.0045)
                         .whereGreaterThanOrEqualTo("longitude", longi - .0045)
                         .whereLessThanOrEqualTo("latitude", lati + .0045)
@@ -145,6 +149,8 @@ public class QueueFragment extends Fragment {
                                 }
                             }
                         });
+
+                */
             }
 
 

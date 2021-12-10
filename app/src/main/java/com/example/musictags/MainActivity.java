@@ -56,14 +56,11 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
     private NavigationBarView bottomNavigationView;
 
-    /*
-    JOSHES
-     */
-    LocationManager locationManager;
-    LocationListener locationListener;
-    /*
-    JOSHES END
-     */
+
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    public static Location current;
+
 
     public static boolean isPaused;
     private static final String CLIENT_ID = "10ee2098620d4a0b8fde685d19d8a0ab";
@@ -159,9 +156,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomnav);
         bottomNavigationView.setOnItemSelectedListener(bottomnavFunction);
         getSupportFragmentManager().beginTransaction().replace(R.id.container, new HomeFragment()).commit();
-        /*
-        JOSHES
-         */
+
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
 
@@ -196,9 +191,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        /*
-        JOSHES END
-         */
     }
 
     /*
@@ -440,9 +432,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-    /*
-    JOSHES
+    /**
+     *
      */
     public void startListening() {
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -459,23 +450,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void updateLocationInfo(Location location) {
+    public static void updateLocationInfo(Location location) {
         Log.i("LocationInfo", location.toString());
-
-        //TextView latitude = (TextView) findViewById(R.id.latitude);
-        //TextView longitude = (TextView) findViewById(R.id.longitude);
-        //TextView altitude = (TextView) findViewById(R.id.altitude);
-        //TextView accuracy = (TextView) findViewById(R.id.accuracy);
-
-        //latitude.setText("Latitude: " + location.getLatitude());
-        //longitude.setText("Longitude: " + location.getLongitude());
-        //altitude.setText("Altitude: " + location.getAltitude());
-        //accuracy.setText("Accuracy: " + location.getAccuracy());
-
-
+        current = location;
+        Log.i("CurrentLocationInfo", current.toString());
     }
-    /*
-    JOSHES END
-     */
+
+
+
 
 }

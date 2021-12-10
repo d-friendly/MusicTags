@@ -182,6 +182,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
 
+
+
+
     /**
      * Uploads user pinned DBTrackNode as a document object in firestore 'Tags' collection
      * @param dbTrackNode is value to be sent to firestore
