@@ -1,5 +1,6 @@
 package com.example.musictags;
 
+import android.location.Location;
 import android.media.MediaParser;
 import android.os.Bundle;
 
@@ -19,9 +20,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
+import com.firebase.geofire.GeoFireUtils;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQueryBounds;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.spotify.android.appremote.api.UserApi;
@@ -33,6 +41,8 @@ import com.spotify.protocol.types.Capabilities;
 import com.spotify.protocol.types.ImageUri;
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
+
+import org.w3c.dom.Document;
 
 public class QueueFragment extends Fragment {
 
@@ -55,26 +65,26 @@ public class QueueFragment extends Fragment {
         //PLACEHOLDER DATA
         //TODO gets an arraylist of tracks from another 'backend'?
         //tracks =
-        tracks=getQueue();
+
 
         //TODO this is giving me errors but spotify will connect with it commented out
 //        if(MainActivity.getPlayerState()==null){
 //            MainActivity.getPlayerApi().skipNext();
 //            Log.i("hellothere","iiii");
 //        }
-
-        Artist artist = new Artist("D Smoke", "spotify:track:1icmxr6OxT03H4dHGOiLFX");
-        List<Artist> artists = new ArrayList<Artist>();
-        artists.add(artist);
-        Album album = new Album("D Smoke", "spotify:track:1icmxr6OxT03H4dHGOiLFX");
-        long duration = 239000;
-        String name = "D Smoke";
-        String uri = "spotify:track:1icmxr6OxT03H4dHGOiLFX";
-        ImageUri iURI = new ImageUri("https://images.complex.com/complex/images/c_fill,dpr_auto,f_auto,q_auto,w_1400/fl_lossy,pg_1/hcjrqlvc6dfhpjxob9nt/cudi?fimg-ssr-default");
-        boolean isEpisode = false;
-        boolean isPodcast = false;
-        Track track = new Track(artist,artists,album,duration,name,uri,iURI,isEpisode,isPodcast);
-        tn = new TrackNode(track);
+        tracks=getQueue();
+//        Artist artist = new Artist("D Smoke", "spotify:track:1icmxr6OxT03H4dHGOiLFX");
+//        List<Artist> artists = new ArrayList<Artist>();
+//        artists.add(artist);
+//        Album album = new Album("D Smoke", "spotify:track:1icmxr6OxT03H4dHGOiLFX");
+//        long duration = 239000;
+//        String name = "D Smoke";
+//        String uri = "spotify:track:1icmxr6OxT03H4dHGOiLFX";
+//        ImageUri iURI = new ImageUri("https://images.complex.com/complex/images/c_fill,dpr_auto,f_auto,q_auto,w_1400/fl_lossy,pg_1/hcjrqlvc6dfhpjxob9nt/cudi?fimg-ssr-default");
+//        boolean isEpisode = false;
+//        boolean isPodcast = false;
+//        Track track = new Track(artist,artists,album,duration,name,uri,iURI,isEpisode,isPodcast);
+//        tn = new TrackNode(track);
         Button yourButton = (Button) v.findViewById(R.id.button);
         //set onclicklistener for your button
         yourButton.setOnClickListener(new View.OnClickListener() {
@@ -113,44 +123,100 @@ public class QueueFragment extends Fragment {
 
      */
     private ArrayList<DBTrackNode> getQueue(){
-        ArrayList<DBTrackNode> queue = new ArrayList<>();
+        final ArrayList<DBTrackNode> queue = new ArrayList<>();
         new Thread() {
 
             @Override
             public void run() {
-                //get current locatin
-                double longi= -89.40059803284569;
-                double lati= 43.07513050785626;
-                //todo
-                //pull (up to) 15 closest Track nodes from firestore ordered by location
-                //add to queue variable
+                //todo get current location
+                Location currentLocation = MainActivity.current;
+                double longi= currentLocation.getLongitude();
+                double lati= currentLocation.getLatitude();
+                final GeoLocation center = new GeoLocation(lati, longi);
+                final double radiusInM = 5100000;
 
+                List<GeoQueryBounds> bounds = GeoFireUtils.getGeoHashQueryBounds(center, radiusInM);
+                final List<Task<QuerySnapshot>> tasks = new ArrayList<>();
+                for (GeoQueryBounds b : bounds) {
+                    Query q = MainActivity.db.collection("Tags")
+                            .orderBy("geohash")
+                            .startAt(b.startHash)
+                            .endAt(b.endHash);
+                    tasks.add(q.get());
+                }
 
-               /*
-
-               MainActivity.db.collection("tags")
-                        .whereLessThanOrEqualTo("longitude",longi +.0045)
-                        .whereGreaterThanOrEqualTo("longitude", longi - .0045)
-                        .whereLessThanOrEqualTo("latitude", lati + .0045)
-                        .whereGreaterThanOrEqualTo("latitude", lati - .005)
-                        .orderBy("latitude")
-                        .orderBy("longitude")
-                        .limit(15)
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                Tasks.whenAllComplete(tasks)
+                        .addOnCompleteListener(new OnCompleteListener<List<Task<?>>>() {
                             @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        Log.d("database", document.getId() + " => " + document.getData());
+                            public void onComplete(@NonNull Task<List<Task<?>>> t) {
+                                List<DocumentSnapshot> matchingDocs = new ArrayList<>();
+                                Log.i("outside loop",tasks.toString());
+                                for (Task<QuerySnapshot> task : tasks) {
+                                    QuerySnapshot snap = task.getResult();
+                                    Log.i("outer",snap.toString());
+                                    Log.i("outer",snap.getDocuments().toString());
+
+
+
+                                    for (DocumentSnapshot doc : snap.getDocuments()) {
+                                        Log.i("inner","inner for loop");
+
+                                        double lat = doc.getDouble("latitude");
+                                        double lng = doc.getDouble("longitude");
+                                        Log.i("inner", ""+lat+", " + lng);
+                                        // We have to filter out a few false positives due to GeoHash
+                                        // accuracy, but most will match
+                                        GeoLocation docLocation = new GeoLocation(lat, lng);
+                                        double distanceInM = GeoFireUtils.getDistanceBetween(docLocation, center);
+                                        Log.i("inner",""+distanceInM);
+                                        if (distanceInM <= radiusInM) {
+                                            Log.i("innerIf",doc.toString());
+                                            matchingDocs.add(doc);
+                                        }
                                     }
-                                } else {
-                                    Log.d("database", "Error getting documents: ", task.getException());
                                 }
+
+                                // matchingDocs contains the results
+                                // ...
+                                Log.i("queue", matchingDocs.toString());
+                                Log.i("queue", matchingDocs.toString());
                             }
                         });
 
-                */
+                //todo
+                //pull (up to) 15 closest Track nodes from firestore ordered by location
+                //add to queue variable
+//                final List<DocumentSnapshot> list1 = null;
+//                MainActivity.db.collection("tags")
+//                        .whereLessThanOrEqualTo("location.longitude", longi+.0045)
+//                        .whereGreaterThanOrEqualTo("location.longitude", longi - .0045)
+//                        .limit(15)
+//                        .get()
+//                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//
+//                            List<DocumentSnapshot> list = null;
+//
+//                            @Override
+//                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                                if (task.isSuccessful()) {
+//
+//                                    filterResultsByLatitude(task);
+////                                    for (QueryDocumentSnapshot document : task.getResult()) {
+////                                        Log.d("database", document.getId() + " => " + document.getData());
+////
+////
+////                                    }
+//                                } else {
+//                                    Log.d("database", "Error getting documents: ", task.getException());
+//                                }
+//                            }
+//
+//                        });
+
+
+
+
+
             }
 
 
@@ -158,6 +224,24 @@ public class QueueFragment extends Fragment {
         return queue;
     }
 
+    public static void filterResultsByLatitude(Task<QuerySnapshot> task){
+//        QuerySnapshot qs = task.getResult();
+//
+//
+//        List<DocumentSnapshot> documentSnapshots = qs.getDocuments();
+//        ArrayList<DBTrackNode> queue = new ArrayList<DBTrackNode>(documentSnapshots.size());
+//
+//        for (DocumentSnapshot ds: documentSnapshots){
+//            queue.add(ds.toObject());
+//        }
+        //DocumentSnapshot qSnap = task.getResult();
+        //List<DocumentSnapshot> documents  ;
+
+//        List<Double> latitudes = ds.get()
+//        Predicate<Double> byLatitude = latitude1 ->
+
+
+    }
 
 }
 

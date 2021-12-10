@@ -21,7 +21,11 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.firebase.geofire.GeoFireUtils;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.core.GeoHash;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.PlayerApi;
@@ -204,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
 
+
                 if(mSpotifyAppRemote!=null) {
                     CallResult<Empty> pauseCall = mSpotifyAppRemote.getPlayerApi().pause();
                     Result<Empty> pauseResult = pauseCall.await(10, TimeUnit.SECONDS);
@@ -341,9 +346,7 @@ public class MainActivity extends AppCompatActivity {
         Return PlayerApi. null if fails
         TODO
      */
-    public static PlayerApi getPlayerApi(){
-         return mSpotifyAppRemote.getPlayerApi();
-    }
+    public static PlayerApi getPlayerApi(){ return mSpotifyAppRemote.getPlayerApi(); }
 
     /*
         Gets UserAPI
@@ -351,9 +354,7 @@ public class MainActivity extends AppCompatActivity {
         Return PlayerApi. null if fails
         TODO
      */
-    public static UserApi getUserApi(){
-        return mSpotifyAppRemote.getUserApi();
-    }
+    public static UserApi getUserApi(){ return mSpotifyAppRemote.getUserApi(); }
 
     /*
         Gets current song
@@ -388,13 +389,21 @@ public class MainActivity extends AppCompatActivity {
      Creates a DBnode by getting current location. Called when pinning a song to cconvert nodes
      */
     public static DBTrackNode attachNodeToLocation(TrackNode tn){
-        //TODO josh once he can longi and lati this where we will call that method.
-
-        double longi = Math.random()* -89.40059803284569; //temp
-        double lati = Math.random()* 43.07513050785626; //tem[
+        //todo get current location
+        Location currentLocation = MainActivity.current;
+        double longi= currentLocation.getLongitude();
+        double lati= currentLocation.getLatitude();
+        Location location = new Location("");
+        location.setLatitude(lati);
+        location.setLongitude(longi);
+        GeoHash gh = new GeoHash(lati,longi); //Might use this instead of location
+        String hash = GeoFireUtils.getGeoHashForLocation(new GeoLocation(lati, longi));
         int upvote = 0;
         int downvote = 0;
-        DBTrackNode dbTN = new DBTrackNode(tn,longi,lati,upvote,downvote,"");
+        DBTrackNode dbTN = new DBTrackNode(tn,longi,lati,location, hash, upvote, downvote,"");
+
+
+
 
         return dbTN;
 
@@ -454,9 +463,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void updateLocationInfo(Location location) {
-        Log.i("LocationInfo", location.toString());
+        //Log.i("LocationInfo", location.toString());
         current = location;
-        Log.i("CurrentLocationInfo", current.toString());
+        //Log.i("CurrentLocationInfo", current.toString());
     }
 
 

@@ -9,12 +9,16 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import android.location.Location;
+import android.os.Bundle;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -60,6 +64,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private FusedLocationProviderClient mFusedLocationProviderClient; //Save the instance
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7;
 
+    //CHECK WITH DYLAN ABOUT THIS HERE VS MAIN
+    //FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
     @Override
@@ -116,6 +122,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.downVoteButton:
                 //TODO down vote code
+                DBTrackNode dbTN;
                 //get current DBTrackNode
                 //updateVote("down", currentTrackNode);
                 break;
@@ -136,18 +143,23 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                 break;
             case R.id.pin:
-                //TrackNode tn = MainActivity.getCurrentSong();
-                //DBTrackNode nodeToPin = MainActivity.attachNodeToLocation(tn);
-                //sendTag(nodeToPin);
+                if(MainActivity.currentTrack == null){
+                    break;
+                }
+                TrackNode tn = MainActivity.getCurrentSong();
+                DBTrackNode nodeToPin = MainActivity.attachNodeToLocation(tn);
+                sendTag(nodeToPin);
+
+
                 //DBTrackNode current = DBTracknode of song playing
                 //then send tag sendTag(current)
                 //SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 //        .findFragmentById(R.id.fragment_map);
                 //mapFragment.getMapAsync(googleMap -> {
                 //todo put all map api stuff on own thread
-                    pinTag();
+                pinTag(nodeToPin);
                 //});
-
+                break;
             default:
                 break;
         }
@@ -157,7 +169,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
      * pins location and associated DBTrackNode of current song playing upon user request
      */
     //TODO add DBTrackNode as a parameter and attach to pin
-    private void pinTag() {
+    private void pinTag(DBTrackNode nodeToPin) {
         //check if permission is granted
         int permission = ActivityCompat.checkSelfPermission(this.getActivity().getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION);
@@ -173,6 +185,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             mFusedLocationProviderClient.getLastLocation()
                     .addOnCompleteListener(this.getActivity(), task -> {
                         Location mLastKnownLocation = task.getResult();
+                        //Log.println(Log.ASSERT, "else statement", mLastKnownLocation.toString());
                         if (task.isSuccessful() && mLastKnownLocation != null) {
 
                             SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.fragment_map);
