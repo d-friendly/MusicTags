@@ -45,7 +45,6 @@ import com.spotify.protocol.types.Track;
 import org.w3c.dom.Document;
 
 public class QueueFragment extends Fragment {
-
     public ArrayList<DBTrackNode> tracks;
     public TrackNode tn;
     private ArrayList<String> data;
@@ -64,7 +63,7 @@ public class QueueFragment extends Fragment {
         ListView listView = (ListView) v.findViewById(R.id.listView);
         //PLACEHOLDER DATA
         //TODO gets an arraylist of tracks from another 'backend'?
-        //tracks =
+        tracks=getQueue();
 
 
         //TODO this is giving me errors but spotify will connect with it commented out
@@ -72,19 +71,9 @@ public class QueueFragment extends Fragment {
 //            MainActivity.getPlayerApi().skipNext();
 //            Log.i("hellothere","iiii");
 //        }
-        tracks=getQueue();
-//        Artist artist = new Artist("D Smoke", "spotify:track:1icmxr6OxT03H4dHGOiLFX");
-//        List<Artist> artists = new ArrayList<Artist>();
-//        artists.add(artist);
-//        Album album = new Album("D Smoke", "spotify:track:1icmxr6OxT03H4dHGOiLFX");
-//        long duration = 239000;
-//        String name = "D Smoke";
-//        String uri = "spotify:track:1icmxr6OxT03H4dHGOiLFX";
-//        ImageUri iURI = new ImageUri("https://images.complex.com/complex/images/c_fill,dpr_auto,f_auto,q_auto,w_1400/fl_lossy,pg_1/hcjrqlvc6dfhpjxob9nt/cudi?fimg-ssr-default");
-//        boolean isEpisode = false;
-//        boolean isPodcast = false;
-//        Track track = new Track(artist,artists,album,duration,name,uri,iURI,isEpisode,isPodcast);
-//        tn = new TrackNode(track);
+
+
+
         Button yourButton = (Button) v.findViewById(R.id.button);
         //set onclicklistener for your button
         yourButton.setOnClickListener(new View.OnClickListener() {

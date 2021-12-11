@@ -19,8 +19,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -87,14 +89,28 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         play.setOnClickListener(this);
         ImageButton pin = (ImageButton) homeV.findViewById(R.id.pin);
         pin.setOnClickListener(this);
+        ImageView trackImage = (ImageView) homeV.findViewById(R.id.trackImageHome);
+        TextView multiLine = (TextView) homeV.findViewById(R.id.editTextTextMultiLine);
+        TextView upvotes = (TextView) homeV.findViewById(R.id.Upvotes);
+        TextView downvotes = (TextView) homeV.findViewById(R.id.Downvotes);
+
+
+        //Change to use the DBNode from online so that we can update upvotes and downvotes
+        multiLine.setVisibility(View.VISIBLE);
 
         if (MainActivity.currentTrack != null){
+            Log.i("hello","https://i.scdn.co/image/" + MainActivity.currentTrack.imageUri.raw.substring(14));
+            Picasso.get().load("https://i.scdn.co/image/"+ MainActivity.currentTrack.imageUri.raw.substring(14)).resize(150,150).centerCrop().into(trackImage);
+
+            multiLine.setText(MainActivity.currentTrack.name + "  " + MainActivity.currentTrack.artist.name);
+            upvotes.setText("Upvotes: " + MainActivity.currentTrack.upvote);
+            downvotes.setText("Downvotes: " + MainActivity.currentTrack.downvote);
 
         }
         //sample working  https://i.scdn.co/image/ab67616d00001e027005885df706891a3c182a57
-        ImageView trackImage = (ImageView) homeV.findViewById(R.id.trackImage);
-        // Picasso.get().load("https://i.scdn.co/image/"+ MainActivity.currentTrack.imageUri.raw.substring(14));
-        Picasso.get().load("https://i.scdn.co/image/ab67616d00001e027005885df706891a3c182a57").into(trackImage);
+//        ImageView trackImage = (ImageView) homeV.findViewById(R.id.trackImage);
+//        Picasso.get().load("https://i.scdn.co/image/"+ MainActivity.currentTrack.imageUri.raw.substring(14));
+//        Picasso.get().load("https://i.scdn.co/image/ab67616d00001e027005885df706891a3c182a57").into(trackImage);
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.getActivity());
 
@@ -106,7 +122,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         });
 
         //Log.println(Log.ASSERT, "permission", isLocationEnabled());
-
 
 
 

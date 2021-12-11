@@ -65,7 +65,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         return v;
     }
 
-
     public void onClick(View v) {
 
         switch (v.getId()) {
@@ -189,7 +188,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                 String CLIENT_SECRET = "f484de60c4d445f88ac37e899cb46e65";
                 String tokenURL = "https://accounts.spotify.com/api/token";
 
-                params.put("Authorization", "Bearer BQA34eL863k0gl0nX34eA0r2WQUkBew4pCzvNu-5LCOECpgu2mlE7x8VtZhBde5OgHqt_fUs1NMArRtdtqwhv6ePjHj4g9Kx1RN6Y2EQ-EoH2ZXFjyaeUDms3AsMhTXM55AQMP8Xt3AbdKj-0SY_B3P7dA1Uz1nBJDY");
+                params.put("Authorization", "Bearer BQCIWq4v_YFxbnskz8cqMsRADM1qyMBP1vFguiBAw6QxCxX80sBZ5DM9t-1YTngAEfvVxm7RArQtv0yzdMHMgahOLtvqBIKXPVNpG-jBZMjJCfBlJr8-lZE8Muh5Sw-i6C0kA4uF11O4HWev0vNT");
 
 
                 return params;

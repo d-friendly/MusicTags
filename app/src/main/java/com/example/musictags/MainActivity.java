@@ -4,11 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -19,6 +22,8 @@ import android.os.Bundle;
 import android.telecom.Call;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.geofire.GeoFireUtils;
@@ -38,9 +43,11 @@ import com.spotify.protocol.client.Subscription;
 import com.spotify.protocol.types.Album;
 import com.spotify.protocol.types.Artist;
 import com.spotify.protocol.types.Empty;
+import com.spotify.protocol.types.Image;
 import com.spotify.protocol.types.ImageUri;
 import com.spotify.protocol.types.PlaybackPosition;
 import com.spotify.protocol.types.PlayerState;
+import com.spotify.protocol.types.Repeat;
 import com.spotify.protocol.types.Track;
 
 
@@ -51,6 +58,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationBarView;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,30 +73,33 @@ public class MainActivity extends AppCompatActivity {
     private LocationManager locationManager;
     private LocationListener locationListener;
     public static Location current;
-
-
+    PlayerState ps;
+    Subscription<PlayerState> mPlayerStateSubscription;
     public static boolean isPaused;
     private static final String CLIENT_ID = "10ee2098620d4a0b8fde685d19d8a0ab";
     private static final String REDIRECT_URI = "http://localhost:8888/callback";
     //private static final String REDIRECT_URI = "http://com.yourdomain.musictags/callback;
-
     private static SpotifyAppRemote mSpotifyAppRemote;
     private static GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient; //Save the instance
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7;
     public static boolean playFromAppQueue=false;
-    public static TrackNode currentTrack;
-
+    public static DBTrackNode currentTrack;
+    static ImageView trackImage;
     public static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+
+    static TextView multiLine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ps = null;
         currentTrack=null;
-
+        trackImage = (ImageView) findViewById(R.id.trackImageHome);
+        multiLine = (TextView) findViewById(R.id.editTextTextMultiLine);
         // Set the connection parameters
         ConnectionParams connectionParams =
                 new ConnectionParams.Builder(CLIENT_ID)
@@ -104,45 +115,34 @@ public class MainActivity extends AppCompatActivity {
 
                         //Spotify app remote created. Use throughout app
                         mSpotifyAppRemote = spotifyAppRemote;
+//                        subscription();
                         Log.i("MainActivity", "Connected! Yay!");
+
+
 
                         // Now you can start interacting with App Remote
                         //connected();
                         mSpotifyAppRemote.getPlayerApi()
                                 .subscribeToPlayerState()
                                 .setEventCallback(playerState -> {
+                                    ps = playerState;
                                     final Track track = playerState.track;
 
                                     isPaused = playerState.isPaused ;
-                                    if(playerState.playbackPosition == playerState.track.duration - 1000 && playFromAppQueue){
-
-                                        //other option TODO delete playFromAppQueue
-
-                                        //play song from uri and quickly stop it(or dont stop it and have it be the correct first song of queue
-                                        //then add all songs to queue
-                                        //Change if statement this is option we choose
-
-
-                                        //TODO handling end up song queuing
-                                        //get next tracknode from queue
-                                        //TrackNode nextSong = ....
-
-                                        //get updated arraylist representative of queue (might be redudent step)
-                                        //play next tracknode
-                                        //play(nextSong);
-                                        //notify adpater that data has changed to update listview
-                                        //           if this doesnt work we should try reattaching to customadapter(dont like this option, work around at best)
-                                        //myAdapter.mySetNewContentMethod(someNewContent);
-                                        //myAdapter.notifyDataSetChanged();
-
-                                    }
+                                    //play next song.
+//                                    if(playerState.playbackPosition == 16){
+//                                        Picasso.get().load("https://i.scdn.co/image/"+ MainActivity.currentTrack.imageUri.raw.substring(14)).resize(150,150).centerCrop().into(trackImage);
+//
+//                                        multiLine.setText(MainActivity.currentTrack.name + "  " + MainActivity.currentTrack.artist.name);
+//
+//                                    }
 
                                     if (track != null) {
-                                        Log.d("MainActivity", track.name + " by " + track.artist.name);
-                                        currentTrack = new TrackNode(track);
-                                        //PlaybackPosition pp = playerStat;
+                                        Log.i("MainActivity", track.name + " by " + track.artist.name);
+                                        currentTrack = new DBTrackNode(new TrackNode(track),0,0,null,"",0,0,"");
+
                                         //TODO Josh
-                                        // put track.artist.name or track.name/ track.ablum etc
+                                        // put track.artist.name or track.name/ track.album etc
                                         // into fragment_home.xml (probably send info to HomeFragment.java)
                                         // all on spotify api or in examples
                                         //return track;
@@ -151,6 +151,8 @@ public class MainActivity extends AppCompatActivity {
                                         currentTrack=null;
                                     }
                                 });
+
+
                     }
 
                     @Override
@@ -183,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
             public void onProviderDisabled(String s){
 
             }
+
         };
 
         if (Build.VERSION.SDK_INT < 23) {
@@ -198,7 +201,129 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+        //trackImage = (ImageView) findViewById(R.id.trackImage);
+
     }
+    public void subscription() {
+        if(mSpotifyAppRemote!=null) {
+            mPlayerStateSubscription =
+                    (Subscription<PlayerState>)
+                            mSpotifyAppRemote
+                                    .getPlayerApi()
+                                    .subscribeToPlayerState()
+                                    .setEventCallback(mPlayerStateEventCallback)
+                                    .setLifecycleCallback(
+                                            new Subscription.LifecycleCallback() {
+                                                @Override
+                                                public void onStart() {
+                                                    Log.i("Event", "start");
+                                                }
+
+                                                @Override
+                                                public void onStop() {
+                                                    Log.i("Event", "end");
+                                                }
+                                            })
+                                    .setErrorCallback(
+                                            throwable -> {
+
+                                            });
+        }
+    }
+    private final Subscription.EventCallback<PlayerState> mPlayerStateEventCallback =
+            new Subscription.EventCallback<PlayerState>() {
+                @Override
+                public void onEvent(PlayerState playerState) {
+                    Log.i("track", currentTrack.toString());
+//                    Drawable drawable =
+//                            ResourcesCompat.getDrawable(
+//                                    getResources(), R.drawable.mediaservice_shuffle, getTheme());
+//                    if (!playerState.playbackOptions.isShuffling) {
+//                        mToggleShuffleButton.setImageDrawable(drawable);
+//                        DrawableCompat.setTint(mToggleShuffleButton.getDrawable(), Color.WHITE);
+//                    } else {
+//                        mToggleShuffleButton.setImageDrawable(drawable);
+//                        DrawableCompat.setTint(
+//                                mToggleShuffleButton.getDrawable(),
+//                                getResources().getColor(R.color.cat_medium_green));
+//                    }
+
+
+//                    if (playerState.track != null) {
+//                        mPlayerStateButton.setText(
+//                                String.format(
+//                                        Locale.US, "%s\n%s", playerState.track.name, playerState.track.artist.name));
+//                        mPlayerStateButton.setTag(playerState);
+//
+//                    }
+//                    // Update progressbar
+//                    if (playerState.playbackSpeed > 0) {
+//                        mTrackProgressBar.unpause();
+//                    } else {
+//                        mTrackProgressBar.pause();
+//                    }
+
+                    // Invalidate play / pause
+//                    if (playerState.isPaused) {
+//                        mPlayPauseButton.setImageResource(R.drawable.btn_play);
+//                    } else {
+//                        mPlayPauseButton.setImageResource(R.drawable.btn_pause);
+//                    }
+
+//                    // Invalidate playback speed
+//                    mPlaybackSpeedButton.setVisibility(View.VISIBLE);
+//                    if (playerState.playbackSpeed == 0.5f) {
+//                        mPlaybackSpeedButton.setImageResource(R.drawable.ic_playback_speed_50);
+//                    } else if (playerState.playbackSpeed == 0.8f) {
+//                        mPlaybackSpeedButton.setImageResource(R.drawable.ic_playback_speed_80);
+//                    } else if (playerState.playbackSpeed == 1f) {
+//                        mPlaybackSpeedButton.setImageResource(R.drawable.ic_playback_speed_100);
+//                    } else if (playerState.playbackSpeed == 1.2f) {
+//                        mPlaybackSpeedButton.setImageResource(R.drawable.ic_playback_speed_120);
+//                    } else if (playerState.playbackSpeed == 1.5f) {
+//                        mPlaybackSpeedButton.setImageResource(R.drawable.ic_playback_speed_150);
+//                    } else if (playerState.playbackSpeed == 2f) {
+//                        mPlaybackSpeedButton.setImageResource(R.drawable.ic_playback_speed_200);
+//                    } else if (playerState.playbackSpeed == 3f) {
+//                        mPlaybackSpeedButton.setImageResource(R.drawable.ic_playback_speed_300);
+//                    }
+//                    if (playerState.track != null && playerState.track.isPodcast && playerState.track.isEpisode) {
+//                        mPlaybackSpeedButton.setEnabled(true);
+//                        mPlaybackSpeedButton.clearColorFilter();
+//                    } else {
+//                        mPlaybackSpeedButton.setEnabled(false);
+//                        mPlaybackSpeedButton.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
+//                    }
+
+                    if (playerState.track != null) {
+//                        // Get image from track
+//                        currentTrack = new DBTrackNode(playerState.track);
+
+//                        mSpotifyAppRemote
+//                                .getImagesApi()
+//                                .getImage(playerState.track.imageUri, Image.Dimension.LARGE)
+//                                .setResultCallback(
+//                                        bitmap -> {
+//                                            trackImage.setImageBitmap(bitmap);
+//
+//                                            Log.i("track", currentTrack.toString());
+//                                            Log.i("hello", "is this workiing");
+//
+//
+//                                            //                                            mImageLabel.setText(
+////                                                    String.format(
+////                                                            Locale.ENGLISH, "%d x %d", bitmap.getWidth(), bitmap.getHeight()));
+//                                        });
+                        // Invalidate seekbar length and position
+//                        mSeekBar.setMax((int) playerState.track.duration);
+//                        mTrackProgressBar.setDuration(playerState.track.duration);
+//                        mTrackProgressBar.update(playerState.playbackPosition);
+                    }
+
+//                    mSeekBar.setEnabled(true);
+                }
+            };
+
 
     /*
         Pauses song if playing on separate thread.
@@ -259,6 +384,7 @@ public class MainActivity extends AppCompatActivity {
     Runs skip operation in seperate thread.
      */
     public static boolean skip(){
+
         new Thread() {
             @Override
             public void run() {
@@ -268,6 +394,7 @@ public class MainActivity extends AppCompatActivity {
                     Result<Empty> skipResult = skipCall.await(10, TimeUnit.SECONDS);
                     if (skipResult.isSuccessful()) {
                         Log.i("play","workingSkip");
+
                         // have some fun with playerState
 
                     } else {
