@@ -44,6 +44,7 @@ import com.spotify.protocol.types.Album;
 import com.spotify.protocol.types.Artist;
 import com.spotify.protocol.types.ImageUri;
 import com.spotify.protocol.types.Track;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,10 +89,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         pin.setOnClickListener(this);
 
         if (MainActivity.currentTrack != null){
-            ImageView trackImage = (ImageView) homeV.findViewById(R.id.trackImage);
-            trackImage.setImageURI(Uri.parse((MainActivity.currentTrack.imageUri).toString()));
-        }
 
+        }
+        //sample working  https://i.scdn.co/image/ab67616d00001e027005885df706891a3c182a57
+        ImageView trackImage = (ImageView) homeV.findViewById(R.id.trackImage);
+        // Picasso.get().load("https://i.scdn.co/image/"+ MainActivity.currentTrack.imageUri.raw.substring(14));
+        Picasso.get().load("https://i.scdn.co/image/ab67616d00001e027005885df706891a3c182a57").into(trackImage);
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.getActivity());
 
@@ -103,6 +106,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         });
 
         //Log.println(Log.ASSERT, "permission", isLocationEnabled());
+
 
 
 
