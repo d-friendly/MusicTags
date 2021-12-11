@@ -17,8 +17,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/bottomnav"
         android:layout_alignParentBottom="true"
-        android:background="?android:attr/windowBackground"
-
+        android:background="#753D2A60"
         app:menu="@menu/menu" />
 
 </RelativeLayout>

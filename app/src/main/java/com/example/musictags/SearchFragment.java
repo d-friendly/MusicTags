@@ -38,11 +38,8 @@ import java.util.List;
 import java.util.Map;
 
 
-
-
 public class SearchFragment extends Fragment implements View.OnClickListener {
     private ArrayList<TrackNode> searchResults;
-
     private EditText searchBox;
     private ListView listView;
     private static Map<String, String>  params = new HashMap<String, String>();
@@ -77,7 +74,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
         return v;
     }
-
 
     public void onClick(View v) {
 
@@ -180,6 +176,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
                             searchResults.add(trackNode);
 
+
+
                         }
 
                         listView.setAdapter(new SearchCustomAdapter(searchResults, getContext()));
@@ -189,11 +187,12 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                     }
 
                 },
-                error -> Log.d("ERROR","Token not valid")
+                error -> Log.d("ERROR","Broken")
         ) {
             //Authorization of GET request. Adds OAuth2 code.
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String>  params = new HashMap<String, String>();
 
 
                 //TODO: Keep losing authorization, need to fix.
