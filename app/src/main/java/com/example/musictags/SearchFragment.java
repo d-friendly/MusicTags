@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,8 @@ import android.widget.ListView;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.spotify.protocol.types.Album;
@@ -27,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,10 +38,19 @@ import java.util.List;
 import java.util.Map;
 
 
+
+
 public class SearchFragment extends Fragment implements View.OnClickListener {
     private ArrayList<TrackNode> searchResults;
+
     private EditText searchBox;
     private ListView listView;
+    private static Map<String, String>  params = new HashMap<String, String>();
+
+
+    interface params {
+        void add();
+    }
 
     public SearchFragment() {
         // Required empty public constructor
@@ -65,26 +78,27 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         return v;
     }
 
+
     public void onClick(View v) {
 
         switch (v.getId()) {
             case R.id.searchButton:
                 String query = String.valueOf(searchBox.getText());
 
-                querySong(query);
+
                 //searchResults = new ArrayList<TrackNode>();
 
-                /*
+
                 new Thread(){
                 @Override
                     public void run() {
-
+                        querySong(query);
                     }
 
                 }.start();
 
 
-                */
+
                 //listView.setAdapter(new SearchCustomAdapter(searchResults, getContext()));
 
                 break;
@@ -166,8 +180,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
                             searchResults.add(trackNode);
 
-
-
                         }
 
                         listView.setAdapter(new SearchCustomAdapter(searchResults, getContext()));
@@ -177,19 +189,77 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                     }
 
                 },
-                error -> Log.d("ERROR","Broken")
+                error -> Log.d("ERROR","Token not valid")
         ) {
             //Authorization of GET request. Adds OAuth2 code.
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String>  params = new HashMap<String, String>();
 
-                //TODO: Keep losing authorization, need to fix. Also need to make it specific to user
+
+                //TODO: Keep losing authorization, need to fix.
                 String CLIENT_SECRET = "f484de60c4d445f88ac37e899cb46e65";
                 String tokenURL = "https://accounts.spotify.com/api/token";
 
-                params.put("Authorization", "Bearer BQCIWq4v_YFxbnskz8cqMsRADM1qyMBP1vFguiBAw6QxCxX80sBZ5DM9t-1YTngAEfvVxm7RArQtv0yzdMHMgahOLtvqBIKXPVNpG-jBZMjJCfBlJr8-lZE8Muh5Sw-i6C0kA4uF11O4HWev0vNT");
+                StringRequest stringRequestAuth = new StringRequest(Method.POST, tokenURL,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
 
+                                String token;
+                                System.out.println(response.toString());
+                                try {
+                                    JSONObject r = new JSONObject(response);
+                                    token =  r.getString("access_token");
+                                    System.out.println(token);
+                                    SearchFragment.params p = () ->
+                                    {
+                                        params.put("Authorization", "Bearer " + token);
+                                    };
+
+                                    p.add();
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                System.out.println("error");
+                            }
+                }) {
+
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> headers = new HashMap<String, String>();
+                        String clients = "10ee2098620d4a0b8fde685d19d8a0ab" + ":" + CLIENT_SECRET;
+
+                        String base64Credentials = Base64.encodeToString(clients.getBytes(), Base64.NO_WRAP);
+
+                        //System.out.println(base64Credentials);
+
+                        headers.put("Authorization", "Basic " + base64Credentials);
+                        headers.put("Content-Type", "application/x-www-form-urlencoded");
+                        return headers;
+                    }
+
+
+                    @Override
+                    protected Map<String,String> getParams() throws AuthFailureError{
+                        Map<String, String> authParams = new HashMap<String, String>();
+
+                        authParams.put("grant_type", "client_credentials");
+                        //authParams.put("Content-Type", "application/x-www-form-urlencoded");
+
+                        return authParams;
+                    }};
+
+                queue.add(stringRequestAuth);
+
+                //params.put("Authorization", "Bearer BQBXcTQcba-RMvbXB2jr1vmlfHS6TFQBSoX0Pr_Yjvu97HHP2IwkNq9R4JKoCbD6R-ZOM7sdv_X9Vy1fSoA");
+
+                //System.out.println("PARAMS" + params.get("Authorization"));
 
                 return params;
             }

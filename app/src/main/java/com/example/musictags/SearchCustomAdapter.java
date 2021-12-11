@@ -65,7 +65,7 @@ public class SearchCustomAdapter extends BaseAdapter implements ListAdapter {
         TextView tvArtist= (TextView) view.findViewById(R.id.artist);
         tvArtist.setText(list.get(i).artist.name);
 
-        System.out.println(list.get(i).imageUri.raw);
+        //System.out.println(list.get(i).imageUri.raw);
 
         Picasso.get().load(list.get(i).imageUri.raw)
                 .resize(150,150)
