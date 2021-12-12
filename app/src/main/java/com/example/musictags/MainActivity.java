@@ -194,7 +194,8 @@ public class MainActivity extends AppCompatActivity {
 
                                     if (track != null) {
                                         Log.i("MainActivity", track.name + " by " + track.artist.name);
-                                        currentTrack = new DBTrackNode(track.artist, track.artists, track.album, track.duration, track.name, track.uri,track.imageUri, track.isEpisode, track.isPodcast,0,0,"",0,0,"");
+                                        currentTrack = new DBTrackNode(track.artist, track.artists
+                                                ,track.album, track.duration, track.name, track.uri,track.imageUri, track.isEpisode, track.isPodcast,0,0,"",0,0,"");
 
                                         //TODO Josh
                                         // put track.artist.name or track.name/ track.album etc
@@ -419,7 +420,7 @@ public class MainActivity extends AppCompatActivity {
         long duration = tn.duration;
         String name = tn.name;
         String uri = tn.uri;
-        ImageUri imageUri = tn.imageUri;
+        ImageUri imageUri = (tn.imageUri);
         boolean isEpisode = tn.isEpisode;
         boolean isPodcast = tn.isPodcast;
 
@@ -434,7 +435,8 @@ public class MainActivity extends AppCompatActivity {
         String hash = GeoFireUtils.getGeoHashForLocation(new GeoLocation(lati, longi));
         int upvote = 0;
         int downvote = 0;
-        DBTrackNode dbTN = new DBTrackNode(artist, artists, album, duration, name, uri, imageUri, isEpisode,
+        DBTrackNode dbTN = new DBTrackNode(artist, artists
+                 , album, duration, name, uri, imageUri, isEpisode,
                 isPodcast, longi, lati, hash, upvote, downvote,"");
 
 

@@ -95,12 +95,21 @@ public class QueueFragment extends Fragment {
                 //      call algorithm for creating queue / might not need a algo just convert to arraylist
                 //tell adapter that underlying list has changed / reset adapter.
                 getQueue();
+                //testQuery();
                 if (tracks == null){
                     getQueue();
+                    //testQuery();
                 }
                 else{
+                    listView.setAdapter(new QueueCustomAdapter(tracks, getContext()));
                     gotQueue = false;
-                    Log.i("after click", tracks.toString());
+//                    for (DBTrackNode track : tracks) {
+//                        Log.i("Track name", track.getname());
+//                    }
+//                    Log.i("after click", tracks.toString());
+//                    Log.i("Track is", tracks.get(0).toString());
+//                    Log.i("Track name is", tracks.get(0).getname());
+
                 }
 
             }
@@ -126,8 +135,8 @@ public class QueueFragment extends Fragment {
 
     /*
         retrieves queue from FireStore
-
      */
+
     private void getQueue() {
         Log.println(Log.ASSERT, "Getting Queue", "Getting Queue");
         final ArrayList<DBTrackNode> queue = new ArrayList<>();
@@ -137,18 +146,27 @@ public class QueueFragment extends Fragment {
 
             gotQueue = true;
             final GeoLocation center = new GeoLocation(MainActivity.current.getLatitude(), MainActivity.current.getLongitude());
-            final double radiusInM = 50 * 1000;
+            final double radiusInM = 50 * 100000;
 
             List<GeoQueryBounds> bounds = GeoFireUtils.getGeoHashQueryBounds(center, radiusInM);
+            Log.println(Log.ASSERT, "Bounds are", bounds.toString());
+            GeoQueryBounds bound1 = bounds.get(0);
+            //GeoQueryBounds bound2 = bounds.get(1);
+            Log.println(Log.ASSERT, "Bound1 start is", bound1.startHash);
+            Log.println(Log.ASSERT, "Bound1 end is", bound1.endHash);
+            //Log.println(Log.ASSERT, "Bound2 start is", bound2.startHash);
+            //Log.println(Log.ASSERT, "Bound2 end is", bound2.endHash);
             final List<Task<QuerySnapshot>> tasks = new ArrayList<>();
+
             for (GeoQueryBounds b : bounds) {
                 Query q = MainActivity.db.collection("Tags")
-                        .orderBy("geohash")
+                        .orderBy("geoHash")
                         .startAt(b.startHash)
                         .endAt(b.endHash);
                 tasks.add(q.get());
                 Log.println(Log.ASSERT, "tasks adding q.get():", q.get().toString());
             }
+
             Tasks.whenAllComplete(tasks)
                     .addOnCompleteListener(new OnCompleteListener<List<Task<?>>>() {
                                                @Override
@@ -159,8 +177,10 @@ public class QueueFragment extends Fragment {
                                                        QuerySnapshot snap = task.getResult();
                                                        Log.println(Log.ASSERT, "tasks are", tasks.toString());
                                                        Log.println(Log.ASSERT, "snap is", snap.toString());
-                                                      DBNodeList = (snap.toObjects(DBTrackNode.class));
-                                                      Log.println(Log.ASSERT, "snap.getDocs is", snap.getDocuments().toString());
+                                                       String snapSize = String.valueOf(snap.size());
+                                                       Log.println(Log.ASSERT, "snap size is",  snapSize);
+                                                       DBNodeList = (snap.toObjects(DBTrackNode.class));
+                                                       Log.println(Log.ASSERT, "snap.getDocs is", snap.getMetadata().toString());
                                                       for (DBTrackNode node : DBNodeList) {
                                                           Log.println(Log.ASSERT, "Looping: Node is", node.toString() + node.uri);
                                                       }
@@ -186,19 +206,41 @@ public class QueueFragment extends Fragment {
                                                }
            });
         }
+    } //uncomment when done using ex docref
+
+
+    private void testQuery() {
+        Log.println(Log.ASSERT, "Entering testQuery()", "testing query");
+        final ArrayList<DBTrackNode> queue = new ArrayList<>();
+        Query query = MainActivity.db.collection("Tags").whereEqualTo("name", "Welcome To Japan");
+        query.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.println(Log.ASSERT, "doc is", document.getId() + " => " + document.getData());
+                                queue.add(document.toObject(DBTrackNode.class));
+                            }
+                            setQueue(queue);
+                        } else {
+                            Log.println(Log.ASSERT, "Error getting documents", task.getException().toString());
+                        }
+                    }
+                });
     }
 
-
-                //DocumentReference docRef = MainActivity.db.collection("Tags").document("XxYdY6uwwegTMflUhkNK");
-            //docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+    /**
+//                DocumentReference docRef = MainActivity.db.collection("Tags").document("mJnrHlF0Emn4U1elaUnd");
+//                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
 //                @Override
 //                public void onSuccess(DocumentSnapshot documentSnapshot) {
 //                    queue.add(documentSnapshot.toObject(DBTrackNode.class));
-                    //Log.println(Log.ASSERT, "queue is", queue.toString());
-                    //queue.add(pulledDBTN);
-                   // setQueue(matchingDocs);
-                //}
-            //});
+//                    Log.println(Log.ASSERT, "queue is", queue.toString());
+//                    //queue.add(pulledDBTN);
+//                    setQueue(queue);
+//                }
+//            });
 //            docRef.get().addOnFailureListener(new OnFailureListener() {
 //                @Override
 //                public void onFailure(@NonNull Exception e) {
@@ -206,7 +248,7 @@ public class QueueFragment extends Fragment {
 //                }
 //            });
 //        }
-
+*/
 
         //Log.println(Log.ASSERT, "If tracks not null", "tracks must be? " + tracks.toString());
 

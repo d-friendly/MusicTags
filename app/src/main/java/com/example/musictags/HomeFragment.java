@@ -221,7 +221,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                                 //TODO: instead of title appending 'Listening Here', want to append the DBTrackNode or document reference id
                                 mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(),
-                                        mLastKnownLocation.getLongitude())).title("Listening Here"));
+                                        mLastKnownLocation.getLongitude())).title(nodeToPin.docID));
                             });
                         }
                     });

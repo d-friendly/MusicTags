@@ -4,6 +4,8 @@ import android.location.Location;
 
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.core.GeoHash;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.ServerTimestamp;
 import com.spotify.protocol.types.Album;
@@ -46,11 +48,15 @@ public class DBTrackNode { //extends TrackNode {
 
     //TODO add date field to DBTrackNode
     // so that server can update it when sent to cloud firestore (if we want to)
-    @ServerTimestamp
-    public Date date;
+    //@ServerTimestamp
+    //public Date date;
 
-    public DBTrackNode(Artist artist, List<Artist> artists, Album album, long duration, String name, String uri, ImageUri imageUri, boolean isEpisode, boolean isPodcast, double longitude, double latitude, String geoHash, int upvote, int downvote, String docID) {
+    //public Timestamp dateStamp;
+
+    public DBTrackNode(Artist artist, List<Artist> artists
+                        , Album album, long duration, String name, String uri, ImageUri imageUri, boolean isEpisode, boolean isPodcast, double longitude, double latitude, String geoHash, int upvote, int downvote, String docID) {
         this.artist = artist;
+        this.artists = artists;
         this.album = album;
         this.duration = duration;
         this.name = name;
@@ -65,6 +71,8 @@ public class DBTrackNode { //extends TrackNode {
         this.latitude=latitude;
         this.docID = docID;
     }
+
+
 
 //    public DBTrackNode(TrackNode tn, double longitude, double latitude, String geoHash, int upvote, int downvote, String docID){
 //        this.upvote=upvote;
@@ -82,9 +90,9 @@ public class DBTrackNode { //extends TrackNode {
         return artist;
     }
 
-    public List<Artist> getartists(){
-        return artists;
-    }
+    //public List<Artist> getartists(){
+        //return artists;
+    //}
     public Album getalbum(){
         return album;
     }
@@ -100,6 +108,7 @@ public class DBTrackNode { //extends TrackNode {
     public ImageUri getimageUri(){
         return imageUri;
     }
+
     public boolean getisEpisode(){
         return isEpisode;
     }
@@ -131,6 +140,14 @@ public class DBTrackNode { //extends TrackNode {
         return geoHash;
     }
 
+//    public Date getdate() {
+//        return  date;
+//    }
+
+//    public Timestamp getdateStamp() {
+//        return dateStamp;
+//    }
 }
+
 
 //TODO IN CLASS: method that keeps track of only URI's plus GEORADIUS paired with the up and down votes..., receives a URI and a location + RADIUS and finds how many upvotes downvoets tags with same URI ahve and appends?
