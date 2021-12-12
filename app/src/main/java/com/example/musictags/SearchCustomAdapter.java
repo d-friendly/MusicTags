@@ -57,8 +57,6 @@ public class SearchCustomAdapter extends BaseAdapter implements ListAdapter {
 
         ImageView coverArt = (ImageView) view.findViewById(R.id.coverArt);
 
-
-
         TextView tvSong= (TextView) view.findViewById(R.id.songTitle);
         tvSong.setText(list.get(i).name);
 
@@ -73,8 +71,6 @@ public class SearchCustomAdapter extends BaseAdapter implements ListAdapter {
                 .into((ImageView) view.findViewById(R.id.coverArt));
 
 
-
-
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,28 +82,24 @@ public class SearchCustomAdapter extends BaseAdapter implements ListAdapter {
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
-                        // Toast message on menu item clicked
-
 
                         switch (menuItem.getTitle().toString()){
                             case "Play Song":
-                                Toast.makeText(view.getContext(), "You Clicked play",   Toast.LENGTH_SHORT).show();
+
                                 //TODO: set current song play to this track uri
 
                                 MainActivity.play(list.get(i));
 
                                 break;
                             case "Pin Song":
-                                Toast.makeText(view.getContext(), "You Clicked pin", Toast.LENGTH_SHORT).show();
+                                // Toast.makeText(view.getContext(), "You Clicked pin", Toast.LENGTH_SHORT).show();
                                 //Call pin method from Home(maps)Fragment
                                 HomeFragment.sendTag(MainActivity.attachNodeToLocation(list.get(i)));
-
                                 break;
                             default:
                                 Toast.makeText(view.getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                                 break;
                         }
-
 
                         return true;
                     }

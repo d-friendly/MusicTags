@@ -36,6 +36,8 @@
             android:background="@drawable/search_bubble"
             android:inputType="textPersonName"
             android:hint="Search"
+            android:padding="10dp"
+            android:textColor="@color/black"
             android:layout_marginTop="5dp"/>
 
         <Button

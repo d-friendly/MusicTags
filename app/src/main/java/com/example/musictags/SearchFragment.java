@@ -15,6 +15,7 @@ import android.widget.ListView;
 
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -45,6 +46,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     private static Map<String, String>  params = new HashMap<String, String>();
 
 
+    // Interface required to obtain Token from Spotify for use in authorization of requests
     interface params {
         void add();
     }
@@ -61,16 +63,11 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
         listView = (ListView) v.findViewById(R.id.listView);
 
-        //PLACEHOLDER DATA
-        //searchResults = new ArrayList<String>(Arrays.asList("111,222,333,444,555,666".split(",")));
-
-
         searchBox = (EditText) v.findViewById(R.id.searchBox);
         searchResults = new ArrayList<TrackNode>();
 
         Button b = (Button) v.findViewById(R.id.searchButton);
         b.setOnClickListener(this);
-
 
         return v;
     }
@@ -81,10 +78,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             case R.id.searchButton:
                 String query = String.valueOf(searchBox.getText());
 
-
-                //searchResults = new ArrayList<TrackNode>();
-
-
                 new Thread(){
                 @Override
                     public void run() {
@@ -93,10 +86,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
                 }.start();
 
-
-
-                //listView.setAdapter(new SearchCustomAdapter(searchResults, getContext()));
-
                 break;
         }
 
@@ -104,17 +93,16 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
 
     public void querySong(String searchItem) {
+        // Initialize queue for sending requests to Spotify Web API
         RequestQueue queue = Volley.newRequestQueue(this.getContext());
 
+        // URL for sending query for tracks. Search item is simply appended as a key word
         String url = "https://api.spotify.com/v1/search?type=track&q=" + searchItem.trim();
 
-
-        //Send request to Spotify Web API
+        // Send 'GET' request to Spotify Web API
         StringRequest getRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
                     try {
-
-                        //System.out.println(response.toString());
 
                         //Convert response to JSONObject and revise to format we need
                         JSONObject spotifyResponse = new JSONObject(response);
@@ -128,7 +116,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                         searchResults = new ArrayList<TrackNode>();
                         for(int i = 0; i < arr.length(); i++){
                             JSONObject track = arr.getJSONObject(i);
-
 
                             //Parsing through JSON response to create TrackNode
 
@@ -177,41 +164,46 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                             searchResults.add(trackNode);
 
 
-
                         }
 
                         listView.setAdapter(new SearchCustomAdapter(searchResults, getContext()));
 
                     } catch (JSONException e) {
-                        e.printStackTrace();
+
                     }
 
                 },
-                error -> Log.d("ERROR","Broken")
+                error -> {
+                    Log.d("GET Request","Error in query to Spotify");
+
+                }
+
         ) {
-            //Authorization of GET request. Adds OAuth2 code.
+            // Authorization of GET request. Adds OAuth2 code.
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String>  params = new HashMap<String, String>();
 
 
-                //TODO: Keep losing authorization, need to fix.
+                // Client Credentials from Spotify Developer Dashboard (specific to Music Tags)
+                String CLIENT_ID = "10ee2098620d4a0b8fde685d19d8a0ab";
                 String CLIENT_SECRET = "f484de60c4d445f88ac37e899cb46e65";
                 String tokenURL = "https://accounts.spotify.com/api/token";
 
+                // POST Request for token using Client Credentials
                 StringRequest stringRequestAuth = new StringRequest(Method.POST, tokenURL,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
 
                                 String token;
-                                System.out.println(response.toString());
+
                                 try {
                                     JSONObject r = new JSONObject(response);
                                     token =  r.getString("access_token");
-                                    System.out.println(token);
-                                    SearchFragment.params p = () ->
-                                    {
+
+                                    // Place token in parameters required to authorize
+                                    // 'GET' requests
+                                    SearchFragment.params p = () ->{
                                         params.put("Authorization", "Bearer " + token);
                                     };
 
@@ -225,21 +217,21 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                System.out.println("error");
+                                Log.e("TOKEN", "Failed to obtain token from Spotify");
                             }
                 }) {
 
                     @Override
                     public Map<String, String> getHeaders() throws AuthFailureError {
                         Map<String, String> headers = new HashMap<String, String>();
-                        String clients = "10ee2098620d4a0b8fde685d19d8a0ab" + ":" + CLIENT_SECRET;
+                        String clients = CLIENT_ID + ":" + CLIENT_SECRET;
 
+                        // Encoded to base64, required for OAuth2 standard
                         String base64Credentials = Base64.encodeToString(clients.getBytes(), Base64.NO_WRAP);
-
-                        //System.out.println(base64Credentials);
 
                         headers.put("Authorization", "Basic " + base64Credentials);
                         headers.put("Content-Type", "application/x-www-form-urlencoded");
+
                         return headers;
                     }
 
@@ -249,20 +241,23 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                         Map<String, String> authParams = new HashMap<String, String>();
 
                         authParams.put("grant_type", "client_credentials");
-                        //authParams.put("Content-Type", "application/x-www-form-urlencoded");
 
                         return authParams;
                     }};
 
                 queue.add(stringRequestAuth);
 
-                //params.put("Authorization", "Bearer BQBXcTQcba-RMvbXB2jr1vmlfHS6TFQBSoX0Pr_Yjvu97HHP2IwkNq9R4JKoCbD6R-ZOM7sdv_X9Vy1fSoA");
 
-                //System.out.println("PARAMS" + params.get("Authorization"));
+                //Line to hardcode if needed (emergency only)
+                /*
+                params.put("Authorization",
+                "Bearer BQBXcTQcba-RMvbXB2jr1vmlfHS6TFQBSoX0Pr_Yjvu97HHP2IwkNq9R4JKoCbD6R-ZOM7sdv_X9Vy1fSoA");
+                */
 
                 return params;
             }
         };
+
 
         queue.add(getRequest);
 
