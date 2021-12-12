@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -93,12 +94,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         TextView multiLine = (TextView) homeV.findViewById(R.id.editTextTextMultiLine);
         TextView upvotes = (TextView) homeV.findViewById(R.id.Upvotes);
         TextView downvotes = (TextView) homeV.findViewById(R.id.Downvotes);
-
+        LinearLayout linearLayout3 = (LinearLayout) homeV.findViewById(R.id.linearLayout3);
 
         //Change to use the DBNode from online so that we can update upvotes and downvotes
-        multiLine.setVisibility(View.VISIBLE);
 
         if (MainActivity.currentTrack != null){
+            linearLayout3.setVisibility(View.VISIBLE);
             Log.i("hello","https://i.scdn.co/image/" + MainActivity.currentTrack.imageUri.raw.substring(14));
             Picasso.get().load("https://i.scdn.co/image/"+ MainActivity.currentTrack.imageUri.raw.substring(14)).resize(150,150).centerCrop().into(trackImage);
 

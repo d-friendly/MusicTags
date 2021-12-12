@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:weightSum="7"
+    android:visibility="invisible"
     >
 
 
@@ -17,7 +18,7 @@
         android:minWidth="100dp"
         android:maxHeight="100dp"
         android:maxWidth="100dp"
-        android:contentDescription="TODO"
+        android:contentDescription="Cover Art"
         android:layout_weight="1"
 
         />

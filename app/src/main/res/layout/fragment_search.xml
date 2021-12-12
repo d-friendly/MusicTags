@@ -15,7 +15,8 @@
         android:background="@color/black"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="7">
+        android:weightSum="7"
+        android:layout_marginBottom="10dp">
 
         <ImageView
             android:id="@+id/imageView"
@@ -24,6 +25,7 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@drawable/ic_baseline_pin_drop_24"
+            android:layout_marginTop="5dp"
              />
 
         <EditText
@@ -33,7 +35,8 @@
             android:layout_weight="6"
             android:background="@drawable/search_bubble"
             android:inputType="textPersonName"
-            android:hint="Search" />
+            android:hint="Search"
+            android:layout_marginTop="5dp"/>
 
         <Button
             android:id="@+id/searchButton"
@@ -42,7 +45,8 @@
             android:layout_weight="1"
             android:backgroundTint="#A4FFFFFF"
             android:textColor="@color/black"
-            android:text="Search" />
+            android:text="Search"
+            android:layout_marginTop="5dp"/>
 
 
     </LinearLayout>
