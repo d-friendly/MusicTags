@@ -2,6 +2,7 @@ package com.example.musictags;
 
 import android.location.Location;
 
+import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.core.GeoHash;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.ServerTimestamp;
@@ -12,11 +13,20 @@ import com.spotify.protocol.types.ImageUri;
 import java.util.Date;
 import java.util.List;
 
-public class DBTrackNode extends TrackNode {
+public class DBTrackNode { //extends TrackNode {
 
+
+    public Artist artist;
+    public List<Artist> artists;
+    public Album album;
+    public long duration;
+    public String name;
+    public String uri;
+    public ImageUri imageUri;
+    public boolean isEpisode;
+    public boolean isPodcast;
     public int upvote;
     public int downvote;
-    public Location location;
     public double longitude;
     public double latitude;
     public String docID;
@@ -24,9 +34,14 @@ public class DBTrackNode extends TrackNode {
 
     //TODO Firebase needs empty public constructor per
     // https://firebase.google.com/docs/firestore/manage-data/add-data
-//    public DBTrackNode() {
-//        super();
-//    }
+    public DBTrackNode() {
+        upvote=0;
+        downvote=0;
+        longitude=0;
+        latitude=0;
+        docID="";
+        geoHash="";
+    }
 
 
     //TODO add date field to DBTrackNode
@@ -34,31 +49,62 @@ public class DBTrackNode extends TrackNode {
     @ServerTimestamp
     public Date date;
 
-    public DBTrackNode(Artist artist, List<Artist> artists, Album album, long duration, String name, String uri, ImageUri imageUri, boolean isEpisode, boolean isPodcast, double longitude, double latitude, Location location, String geoHash, int upvote, int downvote, String docID) {
-        super(artist, artists, album, duration, name, uri, imageUri, isEpisode, isPodcast);
+    public DBTrackNode(Artist artist, List<Artist> artists, Album album, long duration, String name, String uri, ImageUri imageUri, boolean isEpisode, boolean isPodcast, double longitude, double latitude, String geoHash, int upvote, int downvote, String docID) {
+        this.artist = artist;
+        this.album = album;
+        this.duration = duration;
+        this.name = name;
+        this.uri = uri;
+        this.imageUri = imageUri;
+        this.isEpisode = isEpisode;
+        this.isPodcast = isPodcast;
         this.upvote=upvote;
         this.downvote=downvote;
-        this.location=location;
         this.geoHash=geoHash;
         this.longitude=longitude;
         this.latitude=latitude;
         this.docID = docID;
     }
 
-    public DBTrackNode(TrackNode tn, double longitude, double latitude, Location location,String geoHash, int upvote, int downvote, String docID){
-        super(tn);
-        this.upvote=upvote;
-        this.downvote=downvote;
-        this.longitude=longitude;
-        this.latitude=latitude;
-        this.geoHash=geoHash;
-        this.docID = docID;
-        this.location=location;
+//    public DBTrackNode(TrackNode tn, double longitude, double latitude, String geoHash, int upvote, int downvote, String docID){
+//        this.upvote=upvote;
+//        this.downvote=downvote;
+//        this.longitude=longitude;
+//        this.latitude=latitude;
+//        this.geoHash=geoHash;
+//        this.docID = docID;
+//
+//    }
+
+
+
+    public Artist getartist(){
+        return artist;
     }
 
-
-    public Location getlocation(){
-        return location;
+    public List<Artist> getartists(){
+        return artists;
+    }
+    public Album getalbum(){
+        return album;
+    }
+    public long getduration(){
+        return duration;
+    }
+    public String getname(){
+        return name;
+    }
+    public String geturi(){
+        return uri;
+    }
+    public ImageUri getimageUri(){
+        return imageUri;
+    }
+    public boolean getisEpisode(){
+        return isEpisode;
+    }
+    public boolean getisPodcast(){
+        return isPodcast;
     }
 
     public int getupvote(){
@@ -84,4 +130,5 @@ public class DBTrackNode extends TrackNode {
     public String getgeoHash(){
         return geoHash;
     }
+
 }

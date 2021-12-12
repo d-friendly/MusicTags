@@ -22,9 +22,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
@@ -113,6 +115,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 //        Picasso.get().load("https://i.scdn.co/image/"+ MainActivity.currentTrack.imageUri.raw.substring(14));
 //        Picasso.get().load("https://i.scdn.co/image/ab67616d00001e027005885df706891a3c182a57").into(trackImage);
 
+
+
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.getActivity());
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
@@ -164,6 +168,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.pin:
                 if(MainActivity.currentTrack == null){
+                    Toast.makeText(getActivity().getBaseContext()
+                            , "No currently playing spotify tracks detected.", Toast.LENGTH_SHORT).show();
                     break;
                 }
                 TrackNode tn = MainActivity.getCurrentSong();
@@ -202,6 +208,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         }
 
         else {
+            Log.println(Log.ASSERT, "permission not denied: ", "getting last location");
             mFusedLocationProviderClient.getLastLocation()
                     .addOnCompleteListener(this.getActivity(), task -> {
                         Location mLastKnownLocation = task.getResult();

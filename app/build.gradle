@@ -47,7 +47,7 @@ dependencies {
     //dependency for Firebase SDK
     implementation 'com.google.firebase:firebase-firestore'
 
-    // Add this to your app/build.gradle
+    // Add this to your app/build.gradle for geohash functionality
     implementation 'com.firebase:geofire-android-common:3.1.0'
 
     testImplementation 'junit:junit:4.+'

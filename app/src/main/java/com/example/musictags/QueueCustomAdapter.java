@@ -1,6 +1,7 @@
 package com.example.musictags;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ public class QueueCustomAdapter extends BaseAdapter implements ListAdapter {
 
     public QueueCustomAdapter(ArrayList<DBTrackNode> tracks, Context context) {
         this.tracks=tracks;
+        //Log.println(Log.ASSERT, "TRACKS", tracks.toString());
         this.context=context;
     }
 
@@ -37,7 +39,7 @@ public class QueueCustomAdapter extends BaseAdapter implements ListAdapter {
     }
 
     @Override
-    public TrackNode getItem(int pos) {
+    public DBTrackNode getItem(int pos) {
 
         return tracks.get(pos);
     }

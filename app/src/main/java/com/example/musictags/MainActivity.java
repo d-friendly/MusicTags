@@ -393,21 +393,32 @@ public class MainActivity extends AppCompatActivity {
 
 
     /*
-     Creates a DBnode by getting current location. Called when pinning a song to cconvert nodes
+     Creates a DBnode by getting current location. Called when pinning a song to convert nodes
      */
     public static DBTrackNode attachNodeToLocation(TrackNode tn){
+        Artist artist = tn.artist;
+        List<Artist> artists = tn.artists;
+        Album album = tn.album;
+        long duration = tn.duration;
+        String name = tn.name;
+        String uri = tn.uri;
+        ImageUri imageUri = tn.imageUri;
+        boolean isEpisode = tn.isEpisode;
+        boolean isPodcast = tn.isPodcast;
+
         //todo get current location
         Location currentLocation = MainActivity.current;
         double longi= currentLocation.getLongitude();
         double lati= currentLocation.getLatitude();
-        Location location = new Location("");
-        location.setLatitude(lati);
-        location.setLongitude(longi);
-        GeoHash gh = new GeoHash(lati,longi); //Might use this instead of location
+//        Location location = new Location("");
+//        location.setLatitude(lati);
+//        location.setLongitude(longi);
+        //GeoHash gh = new GeoHash(lati,longi); //Might use this instead of location
         String hash = GeoFireUtils.getGeoHashForLocation(new GeoLocation(lati, longi));
         int upvote = 0;
         int downvote = 0;
-        DBTrackNode dbTN = new DBTrackNode(tn,longi,lati,location, hash, upvote, downvote,"");
+        DBTrackNode dbTN = new DBTrackNode(artist, artists, album, duration, name, uri, imageUri, isEpisode,
+                isPodcast, longi, lati, hash, upvote, downvote,"");
 
 
 

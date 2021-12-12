@@ -14,14 +14,16 @@ public class TrackNode extends Track {
 
     //TODO still per https://firebase.google.com/docs/firestore/manage-data/add-data
     // need an empty public constructor
-//    public TrackNode() {
-//        super();
-//    }
 
-    //add any relevant information
+
+        //add any relevant information
+
+//    public TrackNode() {
+//        super()
 //
+//    }
     public TrackNode(Artist artist, List<Artist> artists, Album album, long duration, String name, String uri, ImageUri imageUri, boolean isEpisode, boolean isPodcast) {
-        super(artist, artists, album, duration, name, uri, imageUri, isEpisode, isPodcast);
+        super(artist,artists,album,duration,name,uri,imageUri,isEpisode,isPodcast);
     }
 
     public TrackNode(Track track){
