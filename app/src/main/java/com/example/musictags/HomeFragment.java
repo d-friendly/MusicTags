@@ -64,6 +64,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     public HomeFragment() {
         // Required empty public constructor
+
     }
 
     private static GoogleMap mMap;
@@ -99,7 +100,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         LinearLayout linearLayout3 = (LinearLayout) homeV.findViewById(R.id.linearLayout3);
 
         //Change to use the DBNode from online so that we can update upvotes and downvotes
-
         if (MainActivity.currentTrack != null){
             linearLayout3.setVisibility(View.VISIBLE);
             Log.i("hello","https://i.scdn.co/image/" + MainActivity.currentTrack.imageUri.raw.substring(14));
@@ -108,7 +108,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             multiLine.setText(MainActivity.currentTrack.name + "  " + MainActivity.currentTrack.artist.name);
             upvotes.setText("Upvotes: " + MainActivity.currentTrack.upvote);
             downvotes.setText("Downvotes: " + MainActivity.currentTrack.downvote);
-
         }
         //sample working  https://i.scdn.co/image/ab67616d00001e027005885df706891a3c182a57
 //        ImageView trackImage = (ImageView) homeV.findViewById(R.id.trackImage);
@@ -140,15 +139,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.upVoteButton:
-                //TODO up vote code
-                //get current DBTrackNode
-                //updateVote("up", currentTrackNode);
+                MainActivity.upvote(MainActivity.currentTrack.docID);
                 break;
             case R.id.downVoteButton:
                 //TODO down vote code
-                DBTrackNode dbTN;
-                //get current DBTrackNode
-                //updateVote("down", currentTrackNode);
+                MainActivity.downvote(MainActivity.currentTrack.docID);
                 break;
             case R.id.playButton:
 
@@ -356,6 +351,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         }
 
     }
+
+
 
 
 

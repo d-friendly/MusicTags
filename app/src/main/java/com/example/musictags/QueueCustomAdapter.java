@@ -1,6 +1,7 @@
 package com.example.musictags;
 
 import android.content.Context;
+import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.google.firebase.firestore.FieldValue;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -60,26 +62,17 @@ public class QueueCustomAdapter extends BaseAdapter implements ListAdapter {
         }
 
 
-        //Handle TextView and display string from your list
-        ImageView coverArt = (ImageView) view.findViewById(R.id.coverArt);
-        //TODO
-        //temporary data to show UI
-        coverArt.setImageResource(R.drawable.ic_home);
         TextView tvSong= (TextView) view.findViewById(R.id.songTitle);
         tvSong.setText(tracks.get(position).name);
-
+        ImageView im = (ImageView) view.findViewById(R.id.coverArt) ;
         TextView tvArtist= (TextView) view.findViewById(R.id.artist);
         tvArtist.setText(tracks.get(position).artist.name);
         //Handle buttons and add onClickListeners
-        Picasso.get().load(tracks.get(position).imageUri.raw)
+        Log.i("Tracks", tracks.get(position).imageUri.raw);
+        Picasso.get().load("https://i.scdn.co/image/"+ tracks.get(position).imageUri.raw.substring(14))
                 .resize(150,150)
                 .centerCrop()
-                .into((ImageView) view.findViewById(R.id.coverArt));
-
-//        Picasso.get().load(tracks.get(position).imageUri.raw)
-//                .fit()
-//                .centerCrop()
-//                .into((ImageView) view.findViewById(R.id.coverArt));
+                .into(im);
 
         //Handle TextView and display string from your list
         LinearLayout queueItem = (LinearLayout) view.findViewById((R.id.queueItem));
@@ -87,21 +80,21 @@ public class QueueCustomAdapter extends BaseAdapter implements ListAdapter {
         //Handle buttons and add onClickListeners
         ImageView upvotebtn= (ImageView)view.findViewById(R.id.upvote);
         ImageView downvotebtn = (ImageView) view.findViewById(R.id.downvote);
+        queueItem.setVisibility(View.VISIBLE);
         upvotebtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //upvote song
-                //TODO
+
+                MainActivity.upvote(tracks.get(position).docID);
             }
         });
 
         downvotebtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //downvote song and remove from queue
-                //TODO
-            }
 
+                MainActivity.downvote((tracks.get(position).docID));
+            }
         });
 
         return view;

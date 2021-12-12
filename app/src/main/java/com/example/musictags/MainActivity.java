@@ -24,11 +24,15 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.core.GeoHash;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.spotify.android.appremote.api.ConnectionParams;
@@ -69,7 +73,8 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
     private NavigationBarView bottomNavigationView;
 
-
+    public static ArrayList<DBTrackNode> tracks;
+    public static ListView listView ;
     private LocationManager locationManager;
     private LocationListener locationListener;
     public static Location current;
@@ -446,6 +451,45 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public static boolean upvote(String docID){
+        Log.i("Upvote", currentTrack.docID);
+
+//        MainActivity.db.collection("users")
+//                .document(docID)
+//                .update("upvote", FieldValue.increment(1))
+//                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void unused) {
+//                        Log.println(Log.ASSERT, "Upvote Success", "DocumentSnapshot successfully upvoted!");
+//
+//                    }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                Log.println(Log.ASSERT, "Upvote failed", "Error upvoting song");
+//            }
+//        });
+
+        return true;
+    }
+    public static boolean downvote(String docID){
+//        MainActivity.db.collection("users")
+//                .document(docID)
+//                .update("upvote", FieldValue.increment(-1))
+//                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void unused) {
+//                        Log.println(Log.ASSERT, "Downvote Success", "DocumentSnapshot successfully downvoted!");
+//
+//                    }
+//                }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                Log.println(Log.ASSERT, "Downvote failed", "Error downvoting Song");
+//            }
+//        });
+        return true;
+    }
 
     private NavigationBarView.OnItemSelectedListener bottomnavFunction = new NavigationBarView.OnItemSelectedListener() {
         @Override
