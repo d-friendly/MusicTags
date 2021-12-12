@@ -41,7 +41,6 @@ public class SearchCustomAdapter extends BaseAdapter implements ListAdapter {
 
     @Override
     public long getItemId(int i) {
-        //TODO
         return 0;
     }
 
@@ -94,6 +93,9 @@ public class SearchCustomAdapter extends BaseAdapter implements ListAdapter {
                             case "Pin Song":
                                 // Toast.makeText(view.getContext(), "You Clicked pin", Toast.LENGTH_SHORT).show();
                                 //Call pin method from Home(maps)Fragment
+
+
+
                                 HomeFragment.sendTag(MainActivity.attachNodeToLocation(list.get(i)));
                                 break;
                             default:

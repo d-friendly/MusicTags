@@ -96,6 +96,61 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        connectToSpotify();
+
+        bottomNavigationView = findViewById(R.id.bottomnav);
+        bottomNavigationView.setOnItemSelectedListener(bottomnavFunction);
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, new HomeFragment()).commit();
+
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                updateLocationInfo(location);
+            }
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle){
+
+            }
+            @Override
+            public void onProviderEnabled(String s){
+
+            }
+            @Override
+            public void onProviderDisabled(String s){
+
+            }
+
+        };
+
+        if (Build.VERSION.SDK_INT < 23) {
+            startListening();
+        } else {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            } else{
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location != null) {
+                    updateLocationInfo(location);
+                }
+            }
+        }
+        //trackImage = (ImageView) findViewById(R.id.trackImage);
+
+    }
+
+
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+        connectToSpotify();
+    }
+
+    public void connectToSpotify() {
         ps = null;
         currentTrack=null;
         trackImage = (ImageView) findViewById(R.id.trackImageHome);
@@ -160,49 +215,11 @@ public class MainActivity extends AppCompatActivity {
                         Log.e("MainActivity", throwable.getMessage(), throwable);
                         Log.i("fail","fails to connect to spotify");
                         // Something went wrong when attempting to connect! Handle errors here
+
+
+
                     }
                 });
-        bottomNavigationView = findViewById(R.id.bottomnav);
-        bottomNavigationView.setOnItemSelectedListener(bottomnavFunction);
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, new HomeFragment()).commit();
-
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-
-            @Override
-            public void onLocationChanged(@NonNull Location location) {
-                updateLocationInfo(location);
-            }
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle){
-
-            }
-            @Override
-            public void onProviderEnabled(String s){
-
-            }
-            @Override
-            public void onProviderDisabled(String s){
-
-            }
-
-        };
-
-        if (Build.VERSION.SDK_INT < 23) {
-            startListening();
-        } else {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            } else{
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (location != null) {
-                    updateLocationInfo(location);
-                }
-            }
-        }
-        //trackImage = (ImageView) findViewById(R.id.trackImage);
-
     }
 
     /*

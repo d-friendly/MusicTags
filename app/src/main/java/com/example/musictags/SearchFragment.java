@@ -182,6 +182,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                 error -> {
                     Log.d("GET Request","Error in query to Spotify");
 
+
                 }
 
         ) {
@@ -254,6 +255,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                 queue.add(stringRequestAuth);
 
 
+
                 //Line to hardcode if needed (emergency only)
                 /*
                 params.put("Authorization",
@@ -264,8 +266,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             }
         };
 
-
         queue.add(getRequest);
+        queue.add(getRequest);
+
 
     }
 
