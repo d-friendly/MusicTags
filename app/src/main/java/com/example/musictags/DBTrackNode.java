@@ -132,3 +132,5 @@ public class DBTrackNode { //extends TrackNode {
     }
 
 }
+
+//TODO IN CLASS: method that keeps track of only URI's plus GEORADIUS paired with the up and down votes..., receives a URI and a location + RADIUS and finds how many upvotes downvoets tags with same URI ahve and appends?

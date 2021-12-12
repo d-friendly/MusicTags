@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.DoubleBinaryOperator;
 import java.util.function.Predicate;
 
 import com.firebase.geofire.GeoFireUtils;
@@ -51,8 +52,8 @@ import org.w3c.dom.Document;
 
 public class QueueFragment extends Fragment {
     public ArrayList<DBTrackNode> tracks;
-
     private ArrayList<String> data;
+    public boolean gotQueue = false;
 
 
 //    public static ArrayList<TrackNode> trackList = SearchFragment.searchResults;
@@ -95,9 +96,10 @@ public class QueueFragment extends Fragment {
                 //tell adapter that underlying list has changed / reset adapter.
                 getQueue();
                 if (tracks == null){
-                    Log.i("NULL TRACK", "tracks set later :(");
+                    getQueue();
                 }
                 else{
+                    gotQueue = false;
                     Log.i("after click", tracks.toString());
                 }
 
@@ -124,31 +126,95 @@ public class QueueFragment extends Fragment {
 
     /*
         retrieves queue from FireStore
+
      */
-    private void getQueue(){
+    private void getQueue() {
         Log.println(Log.ASSERT, "Getting Queue", "Getting Queue");
         final ArrayList<DBTrackNode> queue = new ArrayList<>();
-        DocumentReference docRef = MainActivity.db.collection("Tags").document("XxYdY6uwwegTMflUhkNK");
-        UIThread.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        queue.add(documentSnapshot.toObject(DBTrackNode.class));
-                        Log.println(Log.ASSERT, "queue is", queue.toString());
-                        //queue.add(pulledDBTN);
-                        setQueue(queue);
-                    }
-                });
-                docRef.get().addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.println(Log.ASSERT, "Failed", "Could not pull DBTrackNode");
-                    }
-                });
+        //Log.println(Log.ASSERT, "Is tracks null?", "tracks is: " + tracks.toString());
+
+        if (gotQueue == false) {
+
+            gotQueue = true;
+            final GeoLocation center = new GeoLocation(MainActivity.current.getLatitude(), MainActivity.current.getLongitude());
+            final double radiusInM = 50 * 1000;
+
+            List<GeoQueryBounds> bounds = GeoFireUtils.getGeoHashQueryBounds(center, radiusInM);
+            final List<Task<QuerySnapshot>> tasks = new ArrayList<>();
+            for (GeoQueryBounds b : bounds) {
+                Query q = MainActivity.db.collection("Tags")
+                        .orderBy("geohash")
+                        .startAt(b.startHash)
+                        .endAt(b.endHash);
+                tasks.add(q.get());
+                Log.println(Log.ASSERT, "tasks adding q.get():", q.get().toString());
             }
-        });
+            Tasks.whenAllComplete(tasks)
+                    .addOnCompleteListener(new OnCompleteListener<List<Task<?>>>() {
+                                               @Override
+                                               public void onComplete(@NonNull Task<List<Task<?>>> t) {
+                                                   DBTrackNode dbNode;
+                                                   List<DBTrackNode> DBNodeList;
+                                                   for (Task<QuerySnapshot> task : tasks) {
+                                                       QuerySnapshot snap = task.getResult();
+                                                       Log.println(Log.ASSERT, "tasks are", tasks.toString());
+                                                       Log.println(Log.ASSERT, "snap is", snap.toString());
+                                                      DBNodeList = (snap.toObjects(DBTrackNode.class));
+                                                      Log.println(Log.ASSERT, "snap.getDocs is", snap.getDocuments().toString());
+                                                      for (DBTrackNode node : DBNodeList) {
+                                                          Log.println(Log.ASSERT, "Looping: Node is", node.toString() + node.uri);
+                                                      }
+
+
+                                                       for (DocumentSnapshot doc : snap.getDocuments()) {
+                                                           Log.println(Log.ASSERT, "doc is", doc.toString());
+                                                           dbNode = doc.toObject(DBTrackNode.class);
+                                                           Log.println(Log.ASSERT, "dbNodes are", dbNode.toString());
+                                                           double lat = dbNode.latitude;
+                                                           double lng = dbNode.longitude;
+
+                                                           GeoLocation nodeLocation = new GeoLocation(lat, lng);
+                                                           double distanceInM = GeoFireUtils.getDistanceBetween(nodeLocation, center);
+                                                           if (distanceInM <= radiusInM) {
+                                                               queue.add(dbNode);
+                                                           }
+
+
+                                                       }
+                                                   }
+                                                   setQueue(queue);
+                                               }
+           });
+        }
+    }
+
+
+                //DocumentReference docRef = MainActivity.db.collection("Tags").document("XxYdY6uwwegTMflUhkNK");
+            //docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                @Override
+//                public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                    queue.add(documentSnapshot.toObject(DBTrackNode.class));
+                    //Log.println(Log.ASSERT, "queue is", queue.toString());
+                    //queue.add(pulledDBTN);
+                   // setQueue(matchingDocs);
+                //}
+            //});
+//            docRef.get().addOnFailureListener(new OnFailureListener() {
+//                @Override
+//                public void onFailure(@NonNull Exception e) {
+//                    Log.println(Log.ASSERT, "Failed", "Could not pull DBTrackNode");
+//                }
+//            });
+//        }
+
+
+        //Log.println(Log.ASSERT, "If tracks not null", "tracks must be? " + tracks.toString());
+
+
+
+
+
+
 
 //        UIThread.runOnUiThread(new Runnable() {
 //            @Override
@@ -285,15 +351,16 @@ public class QueueFragment extends Fragment {
 //
 //
 //        }).start();
-        Log.println(Log.ASSERT, "nonrunnable queue is ", queue.toString());
-    }
+//        Log.println(Log.ASSERT, "nonrunnable queue is ", queue.toString());
+//    }
 
     private void setQueue(ArrayList<DBTrackNode> queue){
         Log.println(Log.ASSERT, "In setQueue", "queue is" + queue.toString());
         tracks = queue;
         Log.println(Log.ASSERT, "In setQueue", "tracks list is" + queue.toString());
-        //listView.setAdapter(new QueueCustomAdapter(tracks, getContext()));
+       // listView.setAdapter(new QueueCustomAdapter(tracks, getContext()));
     }
+}
 
 //    private ArrayList<DBTrackNode> setTrack() {
 //        getQueue();
@@ -306,8 +373,8 @@ public class QueueFragment extends Fragment {
 //        return gQueue;
 //    }
 
-    public static void filterResultsByLatitude(Task<QuerySnapshot> task){
-//        QuerySnapshot qs = task.getResult();
+//    public static void filterResultsByLatitude(Task<QuerySnapshot> task){
+////        QuerySnapshot qs = task.getResult();
 //
 //
 //        List<DocumentSnapshot> documentSnapshots = qs.getDocuments();
@@ -323,15 +390,10 @@ public class QueueFragment extends Fragment {
 //        Predicate<Double> byLatitude = latitude1 ->
 
 
-    }
+    //}
 
 
 
-
-
-
-
-
-}
+//}
 
 
