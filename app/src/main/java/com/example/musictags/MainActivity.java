@@ -136,10 +136,9 @@ public class MainActivity extends AppCompatActivity {
 //                                        multiLine.setText(MainActivity.currentTrack.name + "  " + MainActivity.currentTrack.artist.name);
 //
 //                                    }
-
                                     if (track != null) {
                                         Log.i("MainActivity", track.name + " by " + track.artist.name);
-                                        currentTrack = new DBTrackNode(new TrackNode(track),0,0,null,"",0,0,"");
+                                        currentTrack = new DBTrackNode(track.artist,track.artists,track.album,track.duration,track.name,track.uri, track.imageUri,track.isEpisode,track.isPodcast,0,0,"",0,0,"");
 
                                         //TODO Josh
                                         // put track.artist.name or track.name/ track.album etc
@@ -320,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
         Return: true if successfully plays song and false if fails. can throw error if we like
 
      */
-    public static boolean play(TrackNode track){
+    public static boolean play(DBTrackNode track){
         new Thread() {
             @Override
             public void run() {
@@ -369,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
         Return current song. null if no song playing or fails
         NOT CURRENTLY BEING CALLEDD TODO
      */
-    public static TrackNode getCurrentSong() {
+    public static DBTrackNode getCurrentSong() {
         if(currentTrack!=null){
             return currentTrack;
         }else{
@@ -395,7 +394,7 @@ public class MainActivity extends AppCompatActivity {
     /*
      Creates a DBnode by getting current location. Called when pinning a song to convert nodes
      */
-    public static DBTrackNode attachNodeToLocation(TrackNode tn){
+    public static DBTrackNode attachNodeToLocation(DBTrackNode tn){
         Artist artist = tn.artist;
         List<Artist> artists = tn.artists;
         Album album = tn.album;
@@ -417,6 +416,7 @@ public class MainActivity extends AppCompatActivity {
         String hash = GeoFireUtils.getGeoHashForLocation(new GeoLocation(lati, longi));
         int upvote = 0;
         int downvote = 0;
+
         DBTrackNode dbTN = new DBTrackNode(artist, artists, album, duration, name, uri, imageUri, isEpisode,
                 isPodcast, longi, lati, hash, upvote, downvote,"");
 

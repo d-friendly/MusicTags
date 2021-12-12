@@ -3,13 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="../../../../../../layout/custom_preview.xml" value="0.1" />
-        <entry key="..\:/Users/Ryan/AndroidStudioProjects/MusicTags/app/src/main/res/layout/custom_search_layout.xml" value="0.125" />
-        <entry key="..\:/Users/Ryan/AndroidStudioProjects/MusicTags/app/src/main/res/layout/fragment_search.xml" value="0.247451343836886" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.335" />
-        <entry key="app/src/main/res/layout/custom_search_layout.xml" value="0.14990942028985507" />
-        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.165" />
-        <entry key="app/src/main/res/layout/fragment_queue.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/custom_queue_layout.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/custom_search_layout.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.18352059925093633" />
+        <entry key="app/src/main/res/layout/fragment_queue.xml" value="0.2094017094017094" />
         <entry key="app/src/main/res/layout/fragment_search.xml" value="0.10555555555555556" />
         <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.10555555555555556" />
         <entry key="app/src/main/res/menu/menu.xml" value="0.1" />
@@ -21,5 +19,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.18352059925093633" />
+      </ProjectState>
+    </option>
   </component>
 </project>

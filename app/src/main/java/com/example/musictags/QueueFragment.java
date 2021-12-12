@@ -51,7 +51,7 @@ import org.w3c.dom.Document;
 
 public class QueueFragment extends Fragment {
     public ArrayList<DBTrackNode> tracks;
-    public TrackNode tn;
+
     private ArrayList<String> data;
 
 
@@ -124,7 +124,6 @@ public class QueueFragment extends Fragment {
 
     /*
         retrieves queue from FireStore
-
      */
     private void getQueue(){
         Log.println(Log.ASSERT, "Getting Queue", "Getting Queue");

@@ -40,7 +40,7 @@ import java.util.Map;
 
 
 public class SearchFragment extends Fragment implements View.OnClickListener {
-    private ArrayList<TrackNode> searchResults;
+    private ArrayList<DBTrackNode> searchResults;
     private EditText searchBox;
     private ListView listView;
     private static Map<String, String>  params = new HashMap<String, String>();
@@ -64,7 +64,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         listView = (ListView) v.findViewById(R.id.listView);
 
         searchBox = (EditText) v.findViewById(R.id.searchBox);
-        searchResults = new ArrayList<TrackNode>();
+        searchResults = new ArrayList<DBTrackNode>();
 
         Button b = (Button) v.findViewById(R.id.searchButton);
         b.setOnClickListener(this);
@@ -113,7 +113,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
                         //Go through array of tracks and obtain data we want
                         //TODO: decide what we need to use
-                        searchResults = new ArrayList<TrackNode>();
+                        searchResults = new ArrayList<DBTrackNode>();
                         for(int i = 0; i < arr.length(); i++){
                             JSONObject track = arr.getJSONObject(i);
 
@@ -148,7 +148,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                             long trackDuration = Long.parseLong(duration);
                             ImageUri imageUri = new ImageUri(coverArtURL);
 
-                            TrackNode trackNode = new TrackNode(
+                            DBTrackNode trackNode = new DBTrackNode(
                                     trackArtist,
                                     listOfArtists,
                                     trackAlbum,
@@ -157,7 +157,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                                     trackURI,
                                     imageUri,
                                     false,
-                                    false
+                                    false,
+                                    0,
+                                    0,
+                                    "",
+                                    0,
+                                    0,
+                                    ""
                             );
 
 

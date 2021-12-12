@@ -172,7 +172,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                             , "No currently playing spotify tracks detected.", Toast.LENGTH_SHORT).show();
                     break;
                 }
-                TrackNode tn = MainActivity.getCurrentSong();
+                DBTrackNode tn = MainActivity.getCurrentSong();
                 DBTrackNode nodeToPin = MainActivity.attachNodeToLocation(tn);
                 sendTag(nodeToPin);
 

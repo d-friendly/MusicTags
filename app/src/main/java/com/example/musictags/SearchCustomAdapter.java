@@ -21,10 +21,10 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 public class SearchCustomAdapter extends BaseAdapter implements ListAdapter {
-    private ArrayList<TrackNode> list;
+    private ArrayList<DBTrackNode> list;
     private Context context;
 
-    public SearchCustomAdapter(ArrayList<TrackNode> list, Context context) {
+    public SearchCustomAdapter(ArrayList<DBTrackNode> list, Context context) {
         this.list = list;
         this.context = context;
     }
@@ -35,7 +35,7 @@ public class SearchCustomAdapter extends BaseAdapter implements ListAdapter {
     }
 
     @Override
-    public TrackNode getItem(int i) {
+    public DBTrackNode getItem(int i) {
         return list.get(i);
     }
 
