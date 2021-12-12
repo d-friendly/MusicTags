@@ -160,11 +160,13 @@
 
     <ImageButton
         android:id="@+id/pin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="50dp"
         android:layout_marginEnd="15dp"
         android:layout_marginBottom="5dp"
-        android:src="@drawable/ic_baseline_pin_drop_24"
+        android:src="@drawable/musictagslogo"
+        android:adjustViewBounds="true"
+        android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/upVoteButton"
         android:backgroundTint="#753D2A60"/>

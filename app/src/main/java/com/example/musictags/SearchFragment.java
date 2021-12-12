@@ -46,7 +46,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     private static Map<String, String>  params = new HashMap<String, String>();
 
 
-    // Interface required to obtain Token from Spotify for use in authorization of requests
+    /**
+     * Interface required to obtain Token from Spotify for use in authorization of requests
+     */
     interface params {
         void add();
     }
@@ -55,6 +57,15 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         // Required empty public constructor
     }
 
+
+    /**
+     * Creates Search Fragment
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -72,6 +83,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         return v;
     }
 
+    /**
+     * onClick listener for search button
+     * @param v
+     */
     public void onClick(View v) {
 
         switch (v.getId()) {
@@ -91,7 +106,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
     }
 
-
+    /**
+     *
+     * Sends query string to Spotify Web API
+     * Sets ListView with DBTrackNodes parse from response
+     *
+     * @param searchItem: song that the user wants to search for
+     */
     public void querySong(String searchItem) {
         // Initialize queue for sending requests to Spotify Web API
         RequestQueue queue = Volley.newRequestQueue(this.getContext());
@@ -199,6 +220,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                 // POST Request for token using Client Credentials
                 StringRequest stringRequestAuth = new StringRequest(Method.POST, tokenURL,
                         new Response.Listener<String>() {
+                            /**
+                             * Handles parsing of a successful token request
+                             * Sets Authorization token
+                             *
+                             * @param response: response String from Spotify token request
+                             *
+                             */
                             @Override
                             public void onResponse(String response) {
 
@@ -222,12 +250,23 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
                             }
                         }, new Response.ErrorListener() {
-                            @Override
+
+                    /**
+                     * Catches errorResponse from Spotify
+                     * @param error
+                     */
+                    @Override
                             public void onErrorResponse(VolleyError error) {
                                 Log.e("TOKEN", "Failed to obtain token from Spotify");
                             }
                 }) {
 
+                    /**
+                     * Sets credentials for Spotify Token request
+                     *
+                     * @return Map for Spotify Authorization
+                     * @throws AuthFailureError
+                     */
                     @Override
                     public Map<String, String> getHeaders() throws AuthFailureError {
                         Map<String, String> headers = new HashMap<String, String>();
@@ -242,7 +281,12 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                         return headers;
                     }
 
-
+                    /**
+                     * Sets parameters of Spotify Web API token request
+                     *
+                     * @return Map of request parameters
+                     * @throws AuthFailureError
+                     */
                     @Override
                     protected Map<String,String> getParams() throws AuthFailureError{
                         Map<String, String> authParams = new HashMap<String, String>();

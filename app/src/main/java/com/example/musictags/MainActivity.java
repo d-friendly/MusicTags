@@ -220,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onFailure(Throwable throwable) {
                         Log.e("MainActivity", throwable.getMessage(), throwable);
                         Log.i("fail","fails to connect to spotify");
+                        connectToSpotify();
                         // Something went wrong when attempting to connect! Handle errors here
 
 
