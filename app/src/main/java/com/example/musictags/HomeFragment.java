@@ -135,33 +135,39 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
             mMap = googleMap;
             Marker mCurrLocationMarker;
-            double currentLatitude = MainActivity.current.getLatitude();
-            double currentLongitude = MainActivity.current.getLongitude();
-            LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+            if(MainActivity.current != null){
+                double currentLatitude = MainActivity.current.getLatitude();
+                double currentLongitude = MainActivity.current.getLongitude();
+                LatLng latLng = new LatLng(currentLatitude, currentLongitude);
 
-            Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.musictagslogo);
-
-
-            Bitmap b = Bitmap.createScaledBitmap(bm, 125, 100, false);
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(latLng);
-            markerOptions.title("Current Position");
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(b));
-            mCurrLocationMarker = mMap.addMarker(markerOptions);
-
-            float zoomLevel = 14.0f; //This goes up to 21
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
+                Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.musictagslogo);
 
 
-           if(setQ) {
-               for (DBTrackNode track : MainActivity.tracks){
+                Bitmap b = Bitmap.createScaledBitmap(bm, 125, 100, false);
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(latLng);
+                markerOptions.title("Current Position");
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(b));
+                mCurrLocationMarker = mMap.addMarker(markerOptions);
+
+                float zoomLevel = 14.0f; //This goes up to 21
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
+
+            }
 
 
-                       //TODO: instead of title appending 'Listening Here', want to append the DBTrackNode or document reference id
-                       mMap.addMarker(new MarkerOptions().position(new LatLng(track.latitude,
-                               track.longitude)).title(track.name + " by " + track.artist.name));
-                   }
-               }
+            if(MainActivity.tracks != null){
+                for (DBTrackNode track : MainActivity.tracks){
+                    //TODO: instead of title appending 'Listening Here', want to append the DBTrackNode or document reference id
+                    mMap = googleMap;
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(track.latitude,
+                            track.longitude)).title(track.name + " by " + track.artist.name));
+                }
+            }
+
+
+           if(setQ) {}
+
 
         });
 

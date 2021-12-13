@@ -513,7 +513,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static void makeQueue(){
 
-        DBTrackNode playNow = tracks.remove(0);
+        DBTrackNode playNow = tracks.get(0);
 
         play(playNow);
         new Thread() {
