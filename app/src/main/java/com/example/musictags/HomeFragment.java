@@ -72,8 +72,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private FusedLocationProviderClient mFusedLocationProviderClient; //Save the instance
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7;
 
-    //CHECK WITH DYLAN ABOUT THIS HERE VS MAIN
-    //FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
 
     @Override
