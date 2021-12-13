@@ -550,6 +550,39 @@ public class MainActivity extends AppCompatActivity {
         //Log.i("CurrentLocationInfo", current.toString());
     }
 
+    public static void makeQueue(){
+
+        DBTrackNode playNow = tracks.remove(0);
+
+        play(playNow);
+        new Thread() {
+            @Override
+            public void run() {
+
+                if (mSpotifyAppRemote != null) {
+
+                    for (DBTrackNode track : tracks) {
+                        String uri = track.uri;
+                        CallResult<Empty> queueCall = mSpotifyAppRemote.getPlayerApi().queue(track.uri);
+                        Result<Empty> queueResult = queueCall.await();
+                        if (queueResult.isSuccessful()) {
+                            Log.i("queue", "working");
+                            // have some fun with playerState
+
+                        } else {
+                                Throwable error = queueResult.getError();
+                                // try to have some fun with the error
+                                Log.i("queue", "fail");
+
+                        }
+                    }
+                } else {
+                    Log.i("play", "mSpotifyAppRemote is null");
+                }
+            }
+        }.start();
+    }
+
 
 
 

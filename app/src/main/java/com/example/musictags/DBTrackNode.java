@@ -48,10 +48,10 @@ public class DBTrackNode { //extends TrackNode {
 
     //TODO add date field to DBTrackNode
     // so that server can update it when sent to cloud firestore (if we want to)
-    //@ServerTimestamp
-    //public Date date;
+    @ServerTimestamp
+    public Date date;
 
-    //public Timestamp dateStamp;
+//    public Timestamp dateStamp;
 
     public DBTrackNode(Artist artist, List<Artist> artists
                         , Album album, long duration, String name, String uri, ImageUri imageUri, boolean isEpisode, boolean isPodcast, double longitude, double latitude, String geoHash, int upvote, int downvote, String docID) {
@@ -140,9 +140,9 @@ public class DBTrackNode { //extends TrackNode {
         return geoHash;
     }
 
-//    public Date getdate() {
-//        return  date;
-//    }
+    public Date getdate() {
+        return  date;
+    }
 
 //    public Timestamp getdateStamp() {
 //        return dateStamp;

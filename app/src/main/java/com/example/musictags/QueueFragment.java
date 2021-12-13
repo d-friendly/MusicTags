@@ -89,6 +89,7 @@ public class QueueFragment extends Fragment {
             //TODO ALGO potential
             @Override
             public void onClick(View v) {
+                MainActivity.tracks = null;
                 //calls method that does the below
                 //query firebase for songs based on parameters
                 //  if firebase allows us to sort said info
@@ -96,16 +97,10 @@ public class QueueFragment extends Fragment {
                 //tell adapter that underlying list has changed / reset adapter.
                 getQueue();
                 //testQuery();
-                if (MainActivity.tracks == null){
-                    getQueue();
-                    //testQuery();
 
-//                    ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
-
-                }
-                else{
+                if (MainActivity.tracks != null) {
+                    MainActivity.listView.setAdapter(new QueueCustomAdapter(MainActivity.tracks, getContext()));
                     gotQueue = false;
-
                 }
 
             }
@@ -131,64 +126,38 @@ public class QueueFragment extends Fragment {
     }
 
 
-
-    /*
-        retrieves queue from FireStore
-
+    /**
+     * Get's queue based on geolocation data from Firestore database
      */
     private void getQueue() {
         Log.println(Log.ASSERT, "Getting Queue", "Getting Queue");
         final ArrayList<DBTrackNode> queue = new ArrayList<>();
-        //Log.println(Log.ASSERT, "Is tracks null?", "tracks is: " + tracks.toString());
 
-        if (gotQueue == false) {
-
-            gotQueue = true;
             final GeoLocation center = new GeoLocation(MainActivity.current.getLatitude(), MainActivity.current.getLongitude());
             final double radiusInM = 50 * 100000;
 
             List<GeoQueryBounds> bounds = GeoFireUtils.getGeoHashQueryBounds(center, radiusInM);
-            Log.println(Log.ASSERT, "Bounds are", bounds.toString());
-            GeoQueryBounds bound1 = bounds.get(0);
-            //GeoQueryBounds bound2 = bounds.get(1);
-            Log.println(Log.ASSERT, "Bound1 start is", bound1.startHash);
-            Log.println(Log.ASSERT, "Bound1 end is", bound1.endHash);
-            //Log.println(Log.ASSERT, "Bound2 start is", bound2.startHash);
-            //Log.println(Log.ASSERT, "Bound2 end is", bound2.endHash);
             final List<Task<QuerySnapshot>> tasks = new ArrayList<>();
-
             for (GeoQueryBounds b : bounds) {
                 Query q = MainActivity.db.collection("Tags")
                         .orderBy("geoHash")
                         .startAt(b.startHash)
                         .endAt(b.endHash);
                 tasks.add(q.get());
-                Log.println(Log.ASSERT, "tasks adding q.get():", q.get().toString());
             }
 
             Tasks.whenAllComplete(tasks)
                     .addOnCompleteListener(new OnCompleteListener<List<Task<?>>>() {
                                                @Override
                                                public void onComplete(@NonNull Task<List<Task<?>>> t) {
+                                                   Log.i("completed", "yup, completed");
                                                    DBTrackNode dbNode;
                                                    List<DBTrackNode> DBNodeList;
                                                    for (Task<QuerySnapshot> task : tasks) {
                                                        QuerySnapshot snap = task.getResult();
-                                                       Log.println(Log.ASSERT, "tasks are", tasks.toString());
-                                                       Log.println(Log.ASSERT, "snap is", snap.toString());
-                                                       String snapSize = String.valueOf(snap.size());
-                                                       Log.println(Log.ASSERT, "snap size is",  snapSize);
-                                                       DBNodeList = (snap.toObjects(DBTrackNode.class));
-                                                       Log.println(Log.ASSERT, "snap.getDocs is", snap.getMetadata().toString());
-                                                      for (DBTrackNode node : DBNodeList) {
-                                                          Log.println(Log.ASSERT, "Looping: Node is", node.toString() + node.uri);
-                                                      }
-
 
                                                        for (DocumentSnapshot doc : snap.getDocuments()) {
-                                                           Log.println(Log.ASSERT, "doc is", doc.toString());
                                                            dbNode = doc.toObject(DBTrackNode.class);
-                                                           Log.println(Log.ASSERT, "dbNodes are", dbNode.toString());
                                                            double lat = dbNode.latitude;
                                                            double lng = dbNode.longitude;
 
@@ -204,9 +173,8 @@ public class QueueFragment extends Fragment {
                                                    setQueue(queue);
                                                }
            });
-        }
 
-    } //uncomment when done using ex docref
+    }
 
 
     private void testQuery() {
@@ -230,18 +198,17 @@ public class QueueFragment extends Fragment {
                 });
     }
 
-
     /**
 //                DocumentReference docRef = MainActivity.db.collection("Tags").document("mJnrHlF0Emn4U1elaUnd");
 //                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
 //                @Override
 //                public void onSuccess(DocumentSnapshot documentSnapshot) {
 //                    queue.add(documentSnapshot.toObject(DBTrackNode.class));
-                    //Log.println(Log.ASSERT, "queue is", queue.toString());
-                    //queue.add(pulledDBTN);
-                   // setQueue(matchingDocs);
-                //}
-            //});
+//                    Log.println(Log.ASSERT, "queue is", queue.toString());
+//                    //queue.add(pulledDBTN);
+//                    setQueue(queue);
+//                }
+//            });
 //            docRef.get().addOnFailureListener(new OnFailureListener() {
 //                @Override
 //                public void onFailure(@NonNull Exception e) {
@@ -257,6 +224,8 @@ public class QueueFragment extends Fragment {
         MainActivity.tracks = queue;
         Log.i("tracks", MainActivity.tracks.get(0).artist.toString());
         Log.println(Log.ASSERT, "In setQueue", "tracks list is" + queue.toString());
+        MainActivity.makeQueue();
+        gotQueue = true;
 //        if(MainActivity.listView.getAdapter()==null){
 //            MainActivity.listView.setAdapter(new QueueCustomAdapter(MainActivity.tracks, getContext()));
 //        }else{
