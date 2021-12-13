@@ -132,7 +132,6 @@ public class QueueFragment extends Fragment {
     private void getQueue() {
         Log.println(Log.ASSERT, "Getting Queue", "Getting Queue");
         final ArrayList<DBTrackNode> queue = new ArrayList<>();
-
             final GeoLocation center = new GeoLocation(MainActivity.current.getLatitude(), MainActivity.current.getLongitude());
             final double radiusInM = 50 * 100000;
 

@@ -3,6 +3,8 @@ package com.example.musictags;
 import android.Manifest;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,10 +36,13 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -118,17 +123,43 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.getActivity());
 
+
+
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.fragment_map);
 
+
+
+
         mapFragment.getMapAsync(googleMap -> {
+
+            mMap = googleMap;
+            Marker mCurrLocationMarker;
+            double currentLatitude = MainActivity.current.getLatitude();
+            double currentLongitude = MainActivity.current.getLongitude();
+            LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+
+            Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.musictagslogo);
+
+
+            Bitmap b = Bitmap.createScaledBitmap(bm, 125, 100, false);
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng);
+            markerOptions.title("Current Position");
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(b));
+            mCurrLocationMarker = mMap.addMarker(markerOptions);
+
+            float zoomLevel = 14.0f; //This goes up to 21
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
+
+
            if(setQ) {
                for (DBTrackNode track : MainActivity.tracks){
-                       mMap = googleMap;
+
 
                        //TODO: instead of title appending 'Listening Here', want to append the DBTrackNode or document reference id
                        mMap.addMarker(new MarkerOptions().position(new LatLng(track.latitude,
-                               track.longitude)).title(track.docID));
+                               track.longitude)).title(track.name + " by " + track.artist.name));
                    }
                }
 
