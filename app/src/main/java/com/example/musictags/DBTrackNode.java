@@ -144,6 +144,11 @@ public class DBTrackNode { //extends TrackNode {
         return  date;
     }
 
+    public void setlongitde(double longitude) {this.longitude=longitude;}
+
+    public void setlatiude(double latitude) {this.latitude=latitude;}
+
+    public void setgeoHash(String geoHash){this.geoHash=geoHash;}
 //    public Timestamp getdateStamp() {
 //        return dateStamp;
 //    }

@@ -23,6 +23,7 @@ import android.telecom.Call;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -50,6 +51,7 @@ import com.spotify.protocol.types.Empty;
 import com.spotify.protocol.types.Image;
 import com.spotify.protocol.types.ImageUri;
 import com.spotify.protocol.types.PlaybackPosition;
+import com.spotify.protocol.types.PlayerContext;
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Repeat;
 import com.spotify.protocol.types.Track;
@@ -177,9 +179,6 @@ public class MainActivity extends AppCompatActivity {
                         mSpotifyAppRemote = spotifyAppRemote;
 //                        subscription();
                         Log.i("MainActivity", "Connected! Yay!");
-
-
-
                         // Now you can start interacting with App Remote
                         //connected();
                         mSpotifyAppRemote.getPlayerApi()
@@ -189,24 +188,15 @@ public class MainActivity extends AppCompatActivity {
                                     final Track track = playerState.track;
 
                                     isPaused = playerState.isPaused ;
-                                    //play next song.
-//                                    if(playerState.playbackPosition == 16){
-//                                        Picasso.get().load("https://i.scdn.co/image/"+ MainActivity.currentTrack.imageUri.raw.substring(14)).resize(150,150).centerCrop().into(trackImage);
-//
-//                                        multiLine.setText(MainActivity.currentTrack.name + "  " + MainActivity.currentTrack.artist.name);
-//
-//                                    }
+
+
 
                                     if (track != null) {
                                         Log.i("MainActivity", track.name + " by " + track.artist.name);
                                         currentTrack = new DBTrackNode(track.artist, track.artists
                                                 ,track.album, track.duration, track.name, track.uri,track.imageUri, track.isEpisode, track.isPodcast,0,0,"",0,0,"");
 
-                                        //TODO Josh
-                                        // put track.artist.name or track.name/ track.album etc
-                                        // into fragment_home.xml (probably send info to HomeFragment.java)
-                                        // all on spotify api or in examples
-                                        //return track;
+
                                     } else {
                                         Log.d("MainActivity", "track was null");
                                         currentTrack=null;
@@ -349,19 +339,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 String uri = track.uri;
-
                 if(mSpotifyAppRemote!=null) {
                     CallResult<Empty> playCall = mSpotifyAppRemote.getPlayerApi().play(uri);
                     Result<Empty> playResult = playCall.await(10, TimeUnit.SECONDS);
                     if (playResult.isSuccessful()) {
                         Log.i("play","working");
                         // have some fun with playerState
-
                     } else {
                         Throwable error = playResult.getError();
                         // try to have some fun with the error
                         Log.i("play","fail") ;
-
                     }
                 }else{
                     Log.i("play", "mSpotifyAppRemote is null");
@@ -371,27 +358,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    /*
-        Gets PlayerApi
-        Parameters:
-        Return PlayerApi. null if fails
-        TODO
-     */
-    public static PlayerApi getPlayerApi(){ return mSpotifyAppRemote.getPlayerApi(); }
-
-    /*
-        Gets UserAPI
-        Parameters:
-        Return PlayerApi. null if fails
-        TODO
-     */
-    public static UserApi getUserApi(){ return mSpotifyAppRemote.getUserApi(); }
 
     /*
         Gets current song
         Parameters:
         Return current song. null if no song playing or fails
-        NOT CURRENTLY BEING CALLEDD TODO
      */
     public static DBTrackNode getCurrentSong() {
         if(currentTrack!=null){
@@ -402,54 +373,44 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /*
-        DisplayQueue from different thread.
-     */
-    private void displayQueue(){
-        new Thread() {
-            @Override
-            public void run() {
-
-            }
-
-        }.start();
-    }
-
-
-    /*
-     Creates a DBnode by getting current location. Called when pinning a song to convert nodes
+    /**
+     * Creates a DBnode by getting current location. Called when pinning a song to convert nodes
+     * @param tn
+     * @return same tracknode
      */
     public static DBTrackNode attachNodeToLocation(DBTrackNode tn){
-        Artist artist = tn.artist;
-        List<Artist> artists = tn.artists;
-        Album album = tn.album;
-        long duration = tn.duration;
-        String name = tn.name;
-        String uri = tn.uri;
-        ImageUri imageUri = (tn.imageUri);
-        boolean isEpisode = tn.isEpisode;
-        boolean isPodcast = tn.isPodcast;
+
+
+//        Artist artist = tn.artist;
+//        List<Artist> artists = tn.artists;
+//        Album album = tn.album;
+//        long duration = tn.duration;
+//        String name = tn.name;
+//        String uri = tn.uri;
+//        ImageUri imageUri = (tn.imageUri);
+//        boolean isEpisode = tn.isEpisode;
+//        boolean isPodcast = tn.isPodcast;
 
         //todo get current location
         Location currentLocation = MainActivity.current;
         double longi= currentLocation.getLongitude();
         double lati= currentLocation.getLatitude();
+
 //        Location location = new Location("");
 //        location.setLatitude(lati);
 //        location.setLongitude(longi);
         //GeoHash gh = new GeoHash(lati,longi); //Might use this instead of location
         String hash = GeoFireUtils.getGeoHashForLocation(new GeoLocation(lati, longi));
-        int upvote = 0;
-        int downvote = 0;
-        DBTrackNode dbTN = new DBTrackNode(artist, artists
-                 , album, duration, name, uri, imageUri, isEpisode,
-                isPodcast, longi, lati, hash, upvote, downvote,"");
-
-
-
-
-        return dbTN;
-
+        int upvote = tn.upvote;
+        int downvote = tn.downvote;
+        tn.setlongitde(longi);
+        tn.setlatiude(lati);
+        tn.setgeoHash(hash);
+//        DBTrackNode dbTN = new DBTrackNode(artist, artists
+//                 , album, duration, name, uri, imageUri, isEpisode,
+//                isPodcast, longi, lati, hash, upvote, downvote,"");
+//        return dbTN;
+        return tn;
     }
 
     public static boolean upvote(String docID){
@@ -568,7 +529,6 @@ public class MainActivity extends AppCompatActivity {
                         if (queueResult.isSuccessful()) {
                             Log.i("queue", "working");
                             // have some fun with playerState
-                            HomeFragment.addQueuePins();
 
                         } else {
                                 Throwable error = queueResult.getError();
