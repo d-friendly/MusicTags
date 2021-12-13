@@ -67,6 +67,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    private static boolean setQ;
     private static GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient; //Save the instance
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 7;
@@ -122,7 +123,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 .findFragmentById(R.id.fragment_map);
 
         mapFragment.getMapAsync(googleMap -> {
-           // displayMyLocation();
+           if(setQ) {
+               for (DBTrackNode track : MainActivity.tracks){
+                       mMap = googleMap;
+
+                       //TODO: instead of title appending 'Listening Here', want to append the DBTrackNode or document reference id
+                       mMap.addMarker(new MarkerOptions().position(new LatLng(track.latitude,
+                               track.longitude)).title(track.docID));
+                   }
+               }
+
         });
 
         //Log.println(Log.ASSERT, "permission", isLocationEnabled());
@@ -352,6 +362,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    public static void addQueuePins(){
+        setQ = true;
+    }
 
 
 

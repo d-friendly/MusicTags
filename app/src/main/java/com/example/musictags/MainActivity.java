@@ -568,6 +568,7 @@ public class MainActivity extends AppCompatActivity {
                         if (queueResult.isSuccessful()) {
                             Log.i("queue", "working");
                             // have some fun with playerState
+                            HomeFragment.addQueuePins();
 
                         } else {
                                 Throwable error = queueResult.getError();
